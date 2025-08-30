@@ -9,7 +9,7 @@
         <b-switch id="settings_compact" :checked="compact" @update:checked="setCompact">
           {{ $t('modals.settings.compact_view') }}
         </b-switch>
-        <b-switch id="settings_snow" :checked="snow" @update:checked="setSnow">
+        <b-switch v-if="false" id="settings_snow" :checked="snow" @update:checked="setSnow">
           {{ $t('modals.settings.snow') }}
         </b-switch>
         <div class="settings-modal__row">
