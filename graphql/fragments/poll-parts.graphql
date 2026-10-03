@@ -1,0 +1,10 @@
+fragment PollParts on Poll {
+  messageId
+  question
+  options {
+    label
+    votes
+  }
+  selectedOption
+  totalVotes
+}

@@ -240,7 +240,7 @@ export const actions = actionTree(
           }
 
           const filteredMessages = messages.filter((message) => {
-            return message.type === MessageType.GENERAL || message.type === MessageType.DONATION;
+            return [MessageType.GENERAL, MessageType.DONATION, MessageType.POLL].includes(message.type);
           });
 
           if (filteredMessages.length > 0 && process.client && document.visibilityState === 'hidden') {

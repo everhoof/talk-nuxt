@@ -11,104 +11,6 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  getCurrentUser: User;
-  getUserById: User;
-  getOnline: Array<User>;
-  searchUsers: Array<User>;
-  getMessages: Array<Message>;
-  isUsernameFree: Scalars['Boolean'];
-  getTokenByDiscordId?: Maybe<Token>;
-  getTokens: Array<Token>;
-  getGrants: Scalars['String'];
-  getHello: Scalars['String'];
-  version: Scalars['String'];
-  getPictureById: Picture;
-};
-
-export type QueryGetUserByIdArgs = {
-  id: Scalars['Int'];
-};
-
-export type QuerySearchUsersArgs = {
-  query: Scalars['String'];
-};
-
-export type QueryGetMessagesArgs = {
-  count?: Maybe<Scalars['Int']>;
-  page?: Maybe<Scalars['Int']>;
-  lastId?: Maybe<Scalars['Int']>;
-  fromDateTime?: Maybe<Scalars['String']>;
-  reverse?: Maybe<Scalars['Boolean']>;
-  poll?: Maybe<Scalars['Boolean']>;
-};
-
-export type QueryIsUsernameFreeArgs = {
-  username: Scalars['String'];
-};
-
-export type QueryGetTokenByDiscordIdArgs = {
-  id: Scalars['String'];
-};
-
-export type QueryGetPictureByIdArgs = {
-  pictureId: Scalars['Int'];
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['Int'];
-  username?: Maybe<Scalars['String']>;
-  avatarId?: Maybe<Scalars['String']>;
-  state: UserState;
-  wasOnlineAt?: Maybe<Scalars['DateTime']>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  roles: Array<Role>;
-  avatar?: Maybe<Picture>;
-  emailConfirmed?: Maybe<Scalars['Boolean']>;
-  muted?: Maybe<Scalars['Boolean']>;
-  email?: Maybe<Scalars['String']>;
-};
-
-export enum UserState {
-  Online = 'ONLINE',
-  Idle = 'IDLE',
-  Offline = 'OFFLINE',
-}
-
-export type Role = {
-  __typename?: 'Role';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-};
-
-export type Picture = {
-  __typename?: 'Picture';
-  id: Scalars['Int'];
-  ownerId?: Maybe<Scalars['Int']>;
-  sId: Scalars['Int'];
-  mId: Scalars['Int'];
-  oId: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  owner: User;
-  s: PictureRepresentation;
-  m: PictureRepresentation;
-  o: PictureRepresentation;
-};
-
-export type PictureRepresentation = {
-  __typename?: 'PictureRepresentation';
-  id: Scalars['Int'];
-  height: Scalars['Float'];
-  width: Scalars['Float'];
-  size: Scalars['Float'];
-  path: Scalars['String'];
-  link: Scalars['String'];
-};
-
 export type Message = {
   __typename?: 'Message';
   id: Scalars['Int'];
@@ -127,16 +29,6 @@ export type Message = {
   owner?: Maybe<User>;
   pictures: Array<Picture>;
   deletedBy?: Maybe<User>;
-};
-
-export type Token = {
-  __typename?: 'Token';
-  id: Scalars['Int'];
-  value: Scalars['String'];
-  ownerId: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  expiresAt?: Maybe<Scalars['DateTime']>;
-  usedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type Mutation = {
@@ -159,6 +51,8 @@ export type Mutation = {
   invalidateCurrentToken: Scalars['Boolean'];
   invalidateTokenById: Scalars['Boolean'];
   invalidateAllTokens: Scalars['Boolean'];
+  createPoll: Message;
+  votePoll: Poll;
 };
 
 export type MutationUpdateAvatarArgs = {
@@ -227,10 +121,116 @@ export type MutationInvalidateTokenByIdArgs = {
   id: Scalars['Int'];
 };
 
+export type MutationCreatePollArgs = {
+  question: Scalars['String'];
+  options: Array<Scalars['String']>;
+};
+
+export type MutationVotePollArgs = {
+  messageId: Scalars['Int'];
+  optionIndex: Scalars['Int'];
+};
+
+export type Picture = {
+  __typename?: 'Picture';
+  id: Scalars['Int'];
+  ownerId?: Maybe<Scalars['Int']>;
+  sId: Scalars['Int'];
+  mId: Scalars['Int'];
+  oId: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  owner: User;
+  s: PictureRepresentation;
+  m: PictureRepresentation;
+  o: PictureRepresentation;
+};
+
+export type PictureRepresentation = {
+  __typename?: 'PictureRepresentation';
+  id: Scalars['Int'];
+  height: Scalars['Float'];
+  width: Scalars['Float'];
+  size: Scalars['Float'];
+  path: Scalars['String'];
+  link: Scalars['String'];
+};
+
+export type Poll = {
+  __typename?: 'Poll';
+  messageId: Scalars['Int'];
+  question: Scalars['String'];
+  options: Array<PollOption>;
+  selectedOption?: Maybe<Scalars['Int']>;
+  totalVotes?: Maybe<Scalars['Int']>;
+};
+
+export type PollOption = {
+  __typename?: 'PollOption';
+  label: Scalars['String'];
+  votes?: Maybe<Scalars['Int']>;
+};
+
 export enum PunishmentTypes {
   Ban = 'ban',
   Mute = 'mute',
 }
+
+export type Query = {
+  __typename?: 'Query';
+  getCurrentUser: User;
+  getUserById: User;
+  getOnline: Array<User>;
+  searchUsers: Array<User>;
+  getMessages: Array<Message>;
+  isUsernameFree: Scalars['Boolean'];
+  getTokenByDiscordId?: Maybe<Token>;
+  getTokens: Array<Token>;
+  getPoll: Poll;
+  getGrants: Scalars['String'];
+  getHello: Scalars['String'];
+  version: Scalars['String'];
+  getPictureById: Picture;
+};
+
+export type QueryGetUserByIdArgs = {
+  id: Scalars['Int'];
+};
+
+export type QuerySearchUsersArgs = {
+  query: Scalars['String'];
+};
+
+export type QueryGetMessagesArgs = {
+  count?: Maybe<Scalars['Int']>;
+  page?: Maybe<Scalars['Int']>;
+  lastId?: Maybe<Scalars['Int']>;
+  fromDateTime?: Maybe<Scalars['String']>;
+  reverse?: Maybe<Scalars['Boolean']>;
+  poll?: Maybe<Scalars['Boolean']>;
+};
+
+export type QueryIsUsernameFreeArgs = {
+  username: Scalars['String'];
+};
+
+export type QueryGetTokenByDiscordIdArgs = {
+  id: Scalars['String'];
+};
+
+export type QueryGetPollArgs = {
+  messageId: Scalars['Int'];
+};
+
+export type QueryGetPictureByIdArgs = {
+  pictureId: Scalars['Int'];
+};
+
+export type Role = {
+  __typename?: 'Role';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -241,6 +241,38 @@ export type Subscription = {
   messageUpdated: Message;
   userRegisteredViaDiscord: Scalars['String'];
 };
+
+export type Token = {
+  __typename?: 'Token';
+  id: Scalars['Int'];
+  value: Scalars['String'];
+  ownerId: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  usedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['Int'];
+  username?: Maybe<Scalars['String']>;
+  avatarId?: Maybe<Scalars['String']>;
+  state: UserState;
+  wasOnlineAt?: Maybe<Scalars['DateTime']>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  roles: Array<Role>;
+  avatar?: Maybe<Picture>;
+  emailConfirmed?: Maybe<Scalars['Boolean']>;
+  muted?: Maybe<Scalars['Boolean']>;
+  email?: Maybe<Scalars['String']>;
+};
+
+export enum UserState {
+  Online = 'ONLINE',
+  Idle = 'IDLE',
+  Offline = 'OFFLINE',
+}
 
 export type MessagePartsFragment = { __typename?: 'Message' } & Pick<
   Message,
@@ -302,6 +334,11 @@ export type OnlinePartsFragment = { __typename?: 'User' } & Pick<
     roles: Array<{ __typename?: 'Role' } & Pick<Role, 'id' | 'name'>>;
   };
 
+export type PollPartsFragment = { __typename?: 'Poll' } & Pick<
+  Poll,
+  'messageId' | 'question' | 'selectedOption' | 'totalVotes'
+> & { options: Array<{ __typename?: 'PollOption' } & Pick<PollOption, 'label' | 'votes'>> };
+
 export type UserPartsFragment = { __typename?: 'User' } & Pick<
   User,
   'id' | 'username' | 'email' | 'emailConfirmed' | 'createdAt' | 'wasOnlineAt'
@@ -341,6 +378,15 @@ export type CreateMessageMutationVariables = Exact<{
 
 export type CreateMessageMutation = { __typename?: 'Mutation' } & {
   createMessage: { __typename?: 'Message' } & Pick<Message, 'id'>;
+};
+
+export type CreatePollMutationVariables = Exact<{
+  question: Scalars['String'];
+  options: Array<Scalars['String']>;
+}>;
+
+export type CreatePollMutation = { __typename?: 'Mutation' } & {
+  createPoll: { __typename?: 'Message' } & MessagePartsFragment;
 };
 
 export type DeleteMessageMutationVariables = Exact<{
@@ -451,6 +497,15 @@ export type UpdateOnlineStatusMutationVariables = Exact<{ [key: string]: never }
 
 export type UpdateOnlineStatusMutation = { __typename?: 'Mutation' } & Pick<Mutation, 'updateOnlineStatus'>;
 
+export type VotePollMutationVariables = Exact<{
+  messageId: Scalars['Int'];
+  optionIndex: Scalars['Int'];
+}>;
+
+export type VotePollMutation = { __typename?: 'Mutation' } & {
+  votePoll: { __typename?: 'Poll' } & PollPartsFragment;
+};
+
 export type GetChatDataQueryVariables = Exact<{
   fromDateTime?: Maybe<Scalars['String']>;
   reverse?: Maybe<Scalars['Boolean']>;
@@ -487,6 +542,14 @@ export type GetOnlineQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetOnlineQuery = { __typename?: 'Query' } & {
   getOnline: Array<{ __typename?: 'User' } & OnlinePartsFragment>;
+};
+
+export type GetPollQueryVariables = Exact<{
+  messageId: Scalars['Int'];
+}>;
+
+export type GetPollQuery = { __typename?: 'Query' } & {
+  getPoll: { __typename?: 'Poll' } & PollPartsFragment;
 };
 
 export type GetUserByIdQueryVariables = Exact<{

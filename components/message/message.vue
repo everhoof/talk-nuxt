@@ -46,7 +46,8 @@
           {{ localDateTime }}
         </time>
       </span>
-      <template v-if="system">
+      <b-message-poll v-if="message.type === 6" :message="message" />
+      <template v-else-if="system">
         <span class="message__text">
           <template v-if="message.type === 3">
             К нам присоединяется
@@ -96,10 +97,11 @@ import { decodePunycodeURL, getUserColor } from '~/tools/util';
 import BContextMenu from '~/components/context-menu/context-menu.vue';
 import BMessageImg from '~/components/message-img/message-img.vue';
 import { Message, MessageState, MessageType } from '~/types/message';
+import BMessagePoll from '~/components/message-poll/message-poll.vue';
 
 @Component({
   name: 'b-message',
-  components: { BMessageImg },
+  components: { BMessageImg, BMessagePoll },
 })
 export default class BMessage extends Vue {
   @InjectReactive('message-context-menu')
@@ -160,7 +162,7 @@ export default class BMessage extends Vue {
   }
 
   get system() {
-    return this.message.type !== MessageType.GENERAL;
+    return ![MessageType.GENERAL, MessageType.POLL].includes(this.message.type);
   }
 
   get mentioning(): boolean {

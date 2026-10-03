@@ -13,6 +13,7 @@ export enum MessageType {
   LOGIN = 3,
   LOGOUT = 4,
   DONATION = 5,
+  POLL = 6,
 }
 
 export interface DonationJson {
@@ -23,13 +24,18 @@ export interface DonationJson {
   currency: string;
 }
 
+export interface PollJson {
+  question: string;
+  options: string[];
+}
+
 export class Message {
   id: number;
   randomId: Maybe<string>;
   content: string;
   username: Maybe<string>;
   schema: string;
-  json: Maybe<DonationJson>;
+  json: Maybe<DonationJson | PollJson>;
   type: MessageType;
   createdAt: string;
   createdAtMillis: number;

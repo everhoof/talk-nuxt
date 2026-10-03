@@ -33,6 +33,16 @@
           :class="{ 'footer__actions-button_type_active': attachPanelActive }"
           @click="attachEmojiClicked"
         />
+        <button
+          v-if="canCreatePoll"
+          type="button"
+          class="footer__actions-button footer__poll-button"
+          :aria-label="$t('poll.create')"
+          :title="$t('poll.create')"
+          @click="$router.push({ name: 'modal_poll' })"
+        >
+          <svg-icon name="poll" />
+        </button>
       </div>
       <div class="footer__input-container">
         <b-rich-input
@@ -104,6 +114,10 @@ export default class Footer extends Vue {
     return this.$accessor.auth.loggedIn;
   }
 
+  get canCreatePoll(): boolean {
+    return this.loggedIn && this.$accessor.auth.can.createOwn('poll').granted;
+  }
+
   get emojisPanelActive(): boolean {
     return this.$accessor.emojisPanelActive;
   }
@@ -161,6 +175,7 @@ export default class Footer extends Vue {
   }
 
   onDocumentKeydown(event: KeyboardEvent): void {
+    if (this.$route.name === 'modal_poll') return;
     if (event.key === 'Escape') {
       if (this.$accessor.messages.editableMessage) {
         this.$accessor.messages.stopMessageEdit();

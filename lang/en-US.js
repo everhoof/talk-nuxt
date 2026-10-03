@@ -1,4 +1,25 @@
 export default {
+  poll: {
+    title: 'Poll',
+    create: 'Create poll',
+    question: 'Poll question',
+    question_placeholder: 'What shall we ask the listeners?',
+    settings_hint: '2–10 options. Each participant chooses one option; results appear after voting.',
+    option: 'Option {number}',
+    remove_option: 'Remove option {number}',
+    add_option: '+ Add option',
+    duplicate_options: 'Answer options must be different.',
+    publish: 'Publish poll',
+    creating: 'Publishing…',
+    voted: 'You have voted',
+    total: 'Total votes: {count}',
+    vote_hint: 'Choose one answer to see the results.',
+    login_hint: 'Sign in to vote.',
+    create_error: 'Could not create the poll. Check your permissions and try again.',
+    vote_error: 'Could not vote. Try again.',
+    load_error: 'Could not load the poll.',
+    retry: 'Retry',
+  },
   welcome: 'Welcome',
 
   // Authentication

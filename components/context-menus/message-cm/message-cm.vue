@@ -82,6 +82,7 @@ export default class MessageCm extends Vue {
   }
 
   get showUpdate(): boolean {
+    if (this.message?.type !== MessageType.GENERAL) return false;
     if (!this.myMessage) return false;
     return this.canUpdateOwn;
   }

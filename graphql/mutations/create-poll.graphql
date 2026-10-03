@@ -1,0 +1,6 @@
+#import "../fragments/message-parts.graphql"
+mutation CreatePoll($question: String!, $options: [String!]!) {
+  createPoll(question: $question, options: $options) {
+    ...MessageParts
+  }
+}
