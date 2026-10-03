@@ -1,10 +1,16 @@
 fragment PollParts on Poll {
   messageId
   question
+  allowMultiple
+  allowChangeVote
+  endsAt
+  isClosed
+  serverTime
+  selectedOptionIds
   options {
+    id
     label
     votes
   }
-  selectedOption
   totalVotes
 }

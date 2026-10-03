@@ -24,18 +24,13 @@ export interface DonationJson {
   currency: string;
 }
 
-export interface PollJson {
-  question: string;
-  options: string[];
-}
-
 export class Message {
   id: number;
   randomId: Maybe<string>;
   content: string;
   username: Maybe<string>;
   schema: string;
-  json: Maybe<DonationJson | PollJson>;
+  json: Maybe<DonationJson>;
   type: MessageType;
   createdAt: string;
   createdAtMillis: number;

@@ -4,7 +4,8 @@
     <b-context-menu-item v-if="showProfile" icon="person" @click="openProfile">Профиль</b-context-menu-item>
     <b-context-menu-item v-if="showMention" icon="reply" @click="mention">Ответить</b-context-menu-item>
     <b-context-menu-item v-if="showUpdate" icon="edit" @click="update">
-      Изменить сообщение
+      <template v-if="message && message.type === 6">{{ $t('poll.edit') }}</template>
+      <template v-else>Изменить сообщение</template>
     </b-context-menu-item>
     <b-context-menu-item v-if="showDelete" icon="delete" @click="remove">
       Удалить сообщение
@@ -82,6 +83,10 @@ export default class MessageCm extends Vue {
   }
 
   get showUpdate(): boolean {
+    if (this.isDeleted) return false;
+    if (this.message?.type === MessageType.POLL) {
+      return this.$accessor.auth.can.updateAny('poll').granted;
+    }
     if (this.message?.type !== MessageType.GENERAL) return false;
     if (!this.myMessage) return false;
     return this.canUpdateOwn;
@@ -116,6 +121,11 @@ export default class MessageCm extends Vue {
 
   update(): void {
     if (!this.message) return;
+    if (this.message.type === MessageType.POLL) {
+      this.$router.push({ name: 'modal_poll_edit', params: { id: this.message.id.toString() } });
+      this.$nuxt.$emit('close-context-menus');
+      return;
+    }
     this.$accessor.messages.startMessageEdit(this.message);
 
     this.$nuxt.$emit('close-context-menus');

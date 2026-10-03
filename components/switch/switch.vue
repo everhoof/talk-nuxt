@@ -6,7 +6,14 @@
       switch_with_margin: margin,
     }"
   >
-    <input :id="id" v-model="checkedSynced" class="switch__input" type="checkbox" :disabled="disabled" />
+    <input
+      :id="id"
+      v-model="checkedSynced"
+      class="switch__input"
+      type="checkbox"
+      role="switch"
+      :disabled="disabled"
+    />
     <label :for="id" class="switch__label">
       <slot />
     </label>

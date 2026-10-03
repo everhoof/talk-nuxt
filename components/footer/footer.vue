@@ -175,7 +175,7 @@ export default class Footer extends Vue {
   }
 
   onDocumentKeydown(event: KeyboardEvent): void {
-    if (this.$route.name === 'modal_poll') return;
+    if (['modal_poll', 'modal_poll_edit'].includes(this.$route.name || '')) return;
     if (event.key === 'Escape') {
       if (this.$accessor.messages.editableMessage) {
         this.$accessor.messages.stopMessageEdit();

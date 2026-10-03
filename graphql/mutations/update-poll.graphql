@@ -1,12 +1,14 @@
 #import "../fragments/message-parts.graphql"
-mutation CreatePoll(
+mutation UpdatePoll(
+  $messageId: Int!
   $question: String!
-  $options: [String!]!
+  $options: [UpdatePollOptionInput!]!
   $allowMultiple: Boolean
   $allowChangeVote: Boolean
   $endsAt: DateTime
 ) {
-  createPoll(
+  updatePoll(
+    messageId: $messageId
     question: $question
     options: $options
     allowMultiple: $allowMultiple

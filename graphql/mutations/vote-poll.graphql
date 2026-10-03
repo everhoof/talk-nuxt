@@ -1,6 +1,6 @@
 #import "../fragments/poll-parts.graphql"
-mutation VotePoll($messageId: Int!, $optionIndex: Int!) {
-  votePoll(messageId: $messageId, optionIndex: $optionIndex) {
+mutation VotePoll($messageId: Int!, $optionIds: [Int!]!) {
+  votePoll(messageId: $messageId, optionIds: $optionIds) {
     ...PollParts
   }
 }

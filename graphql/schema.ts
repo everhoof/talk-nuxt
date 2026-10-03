@@ -52,7 +52,9 @@ export type Mutation = {
   invalidateTokenById: Scalars['Boolean'];
   invalidateAllTokens: Scalars['Boolean'];
   createPoll: Message;
+  updatePoll: Message;
   votePoll: Poll;
+  closePoll: Poll;
 };
 
 export type MutationUpdateAvatarArgs = {
@@ -123,12 +125,28 @@ export type MutationInvalidateTokenByIdArgs = {
 
 export type MutationCreatePollArgs = {
   question: Scalars['String'];
+  allowMultiple?: Maybe<Scalars['Boolean']>;
+  allowChangeVote?: Maybe<Scalars['Boolean']>;
+  endsAt?: Maybe<Scalars['DateTime']>;
   options: Array<Scalars['String']>;
+};
+
+export type MutationUpdatePollArgs = {
+  question: Scalars['String'];
+  allowMultiple?: Maybe<Scalars['Boolean']>;
+  allowChangeVote?: Maybe<Scalars['Boolean']>;
+  endsAt?: Maybe<Scalars['DateTime']>;
+  messageId: Scalars['Int'];
+  options: Array<UpdatePollOptionInput>;
 };
 
 export type MutationVotePollArgs = {
   messageId: Scalars['Int'];
-  optionIndex: Scalars['Int'];
+  optionIds: Array<Scalars['Int']>;
+};
+
+export type MutationClosePollArgs = {
+  messageId: Scalars['Int'];
 };
 
 export type Picture = {
@@ -160,6 +178,12 @@ export type Poll = {
   __typename?: 'Poll';
   messageId: Scalars['Int'];
   question: Scalars['String'];
+  allowMultiple: Scalars['Boolean'];
+  allowChangeVote: Scalars['Boolean'];
+  endsAt?: Maybe<Scalars['DateTime']>;
+  isClosed: Scalars['Boolean'];
+  serverTime: Scalars['DateTime'];
+  selectedOptionIds: Array<Scalars['Int']>;
   options: Array<PollOption>;
   selectedOption?: Maybe<Scalars['Int']>;
   totalVotes?: Maybe<Scalars['Int']>;
@@ -167,6 +191,7 @@ export type Poll = {
 
 export type PollOption = {
   __typename?: 'PollOption';
+  id: Scalars['Int'];
   label: Scalars['String'];
   votes?: Maybe<Scalars['Int']>;
 };
@@ -250,6 +275,11 @@ export type Token = {
   createdAt: Scalars['DateTime'];
   expiresAt?: Maybe<Scalars['DateTime']>;
   usedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UpdatePollOptionInput = {
+  id?: Maybe<Scalars['Int']>;
+  label: Scalars['String'];
 };
 
 export type User = {
@@ -336,8 +366,16 @@ export type OnlinePartsFragment = { __typename?: 'User' } & Pick<
 
 export type PollPartsFragment = { __typename?: 'Poll' } & Pick<
   Poll,
-  'messageId' | 'question' | 'selectedOption' | 'totalVotes'
-> & { options: Array<{ __typename?: 'PollOption' } & Pick<PollOption, 'label' | 'votes'>> };
+  | 'messageId'
+  | 'question'
+  | 'allowMultiple'
+  | 'allowChangeVote'
+  | 'endsAt'
+  | 'isClosed'
+  | 'serverTime'
+  | 'selectedOptionIds'
+  | 'totalVotes'
+> & { options: Array<{ __typename?: 'PollOption' } & Pick<PollOption, 'id' | 'label' | 'votes'>> };
 
 export type UserPartsFragment = { __typename?: 'User' } & Pick<
   User,
@@ -362,6 +400,14 @@ export type UserPartsFragment = { __typename?: 'User' } & Pick<
     roles: Array<{ __typename?: 'Role' } & Pick<Role, 'id' | 'name'>>;
   };
 
+export type ClosePollMutationVariables = Exact<{
+  messageId: Scalars['Int'];
+}>;
+
+export type ClosePollMutation = { __typename?: 'Mutation' } & {
+  closePoll: { __typename?: 'Poll' } & PollPartsFragment;
+};
+
 export type ConfirmEmailMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
@@ -383,6 +429,9 @@ export type CreateMessageMutation = { __typename?: 'Mutation' } & {
 export type CreatePollMutationVariables = Exact<{
   question: Scalars['String'];
   options: Array<Scalars['String']>;
+  allowMultiple?: Maybe<Scalars['Boolean']>;
+  allowChangeVote?: Maybe<Scalars['Boolean']>;
+  endsAt?: Maybe<Scalars['DateTime']>;
 }>;
 
 export type CreatePollMutation = { __typename?: 'Mutation' } & {
@@ -497,9 +546,22 @@ export type UpdateOnlineStatusMutationVariables = Exact<{ [key: string]: never }
 
 export type UpdateOnlineStatusMutation = { __typename?: 'Mutation' } & Pick<Mutation, 'updateOnlineStatus'>;
 
+export type UpdatePollMutationVariables = Exact<{
+  messageId: Scalars['Int'];
+  question: Scalars['String'];
+  options: Array<UpdatePollOptionInput>;
+  allowMultiple?: Maybe<Scalars['Boolean']>;
+  allowChangeVote?: Maybe<Scalars['Boolean']>;
+  endsAt?: Maybe<Scalars['DateTime']>;
+}>;
+
+export type UpdatePollMutation = { __typename?: 'Mutation' } & {
+  updatePoll: { __typename?: 'Message' } & MessagePartsFragment;
+};
+
 export type VotePollMutationVariables = Exact<{
   messageId: Scalars['Int'];
-  optionIndex: Scalars['Int'];
+  optionIds: Array<Scalars['Int']>;
 }>;
 
 export type VotePollMutation = { __typename?: 'Mutation' } & {

@@ -29,6 +29,7 @@ export function createRouter() {
         component: MainPage,
         children: [
           { path: 'poll', name: 'modal_poll', component: PollModal },
+          { path: 'poll/:id/edit', name: 'modal_poll_edit', component: PollModal },
           { path: 'login', name: 'modal_login', component: LoginModal },
           { path: 'register', name: 'modal_register', component: RegisterModal },
           { path: 'profile/:id', name: 'modal_profile', component: ProfileModal },
