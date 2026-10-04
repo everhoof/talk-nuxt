@@ -21,53 +21,6 @@
 		color var(--primary-text)
 		overflow-wrap anywhere
 
-	&__option
-		display block
-		width 100%
-		margin-top 8px
-		padding 10px 12px
-		font inherit
-		text-align left
-		color var(--primary-text)
-		background var(--input-background)
-		border 1px solid var(--primary)
-		border-radius 5px
-		cursor pointer
-		overflow-wrap anywhere
-
-		&:hover:not(:disabled)
-			background var(--background-active)
-
-		&:disabled
-			cursor default
-			opacity .6
-
-	&__result
-		margin-bottom 12px
-
-	&__result-label
-		display flex
-		justify-content space-between
-		gap 12px
-		margin-bottom 6px
-		font-size 14px
-		color var(--primary-text)
-		overflow-wrap anywhere
-
-		span:last-child
-			flex-shrink 0
-
-	&__bar
-		height 6px
-		background var(--input-background)
-		border-radius 3px
-		overflow hidden
-
-	&__fill
-		height 100%
-		background var(--primary)
-		transition width .2s
-
 	&__hint
 		margin 12px 0 0
 		font-size 12px
@@ -83,43 +36,11 @@
 		display block
 		margin 8px 0 0
 
-	&__choice
-		display flex
-		align-items flex-start
-		gap 10px
-		margin-top 8px
-		padding 10px 12px
-		color var(--primary-text)
-		background var(--input-background)
-		border-radius 5px
-		overflow-wrap anywhere
-		cursor pointer
-
-		input
-			flex-shrink 0
-			width 16px
-			height 16px
-			margin 2px 0 0
-			accent-color var(--primary)
-
-	&__action.button
+	&__action
 		margin-top 12px
 		margin-right 8px
-
-	&__submit.button
-		background-color var(--primary)
-		border none
-		outline none
-
-		&:disabled
-			background-color var(--input-background)
-			opacity .45
-			cursor not-allowed
 
 	&__status
 		margin 0 0 16px
 		color var(--accent-text)
 		font-size 13px
-
-	&__results
-		margin-top 16px

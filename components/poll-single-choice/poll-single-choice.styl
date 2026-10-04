@@ -1,0 +1,22 @@
+.poll-single-choice
+
+	&__option
+		display block
+		width 100%
+		margin-top 8px
+		padding 10px 12px
+		font inherit
+		text-align left
+		color var(--primary-text)
+		background var(--input-background)
+		border 1px solid var(--primary)
+		border-radius 5px
+		cursor pointer
+		overflow-wrap anywhere
+
+		&:hover:not(:disabled)
+			background var(--background-active)
+
+		&:disabled
+			cursor default
+			opacity .6
