@@ -54,6 +54,7 @@ export type Mutation = {
   createPoll: Message;
   updatePoll: Message;
   votePoll: Poll;
+  cancelPollVote: Poll;
   closePoll: Poll;
 };
 
@@ -143,6 +144,10 @@ export type MutationUpdatePollArgs = {
 export type MutationVotePollArgs = {
   messageId: Scalars['Int'];
   optionIds: Array<Scalars['Int']>;
+};
+
+export type MutationCancelPollVoteArgs = {
+  messageId: Scalars['Int'];
 };
 
 export type MutationClosePollArgs = {
@@ -399,6 +404,14 @@ export type UserPartsFragment = { __typename?: 'User' } & Pick<
     >;
     roles: Array<{ __typename?: 'Role' } & Pick<Role, 'id' | 'name'>>;
   };
+
+export type CancelPollVoteMutationVariables = Exact<{
+  messageId: Scalars['Int'];
+}>;
+
+export type CancelPollVoteMutation = { __typename?: 'Mutation' } & {
+  cancelPollVote: { __typename?: 'Poll' } & PollPartsFragment;
+};
 
 export type ClosePollMutationVariables = Exact<{
   messageId: Scalars['Int'];

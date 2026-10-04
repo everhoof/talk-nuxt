@@ -69,7 +69,7 @@
         >
           {{ $t('poll.set_deadline') }}
         </b-switch>
-        <template v-if="hasDeadline">
+        <div v-if="hasDeadline">
           <label for="poll-ends-at" class="poll-modal__label">{{ $t('poll.end_time') }}</label>
           <input
             id="poll-ends-at"
@@ -81,7 +81,7 @@
             required
           />
           <p v-if="endTime && !validDeadline" class="poll-modal__error">{{ $t('poll.end_time_error') }}</p>
-        </template>
+        </div>
       </div>
       <p v-if="duplicateOptions" class="poll-modal__error" role="alert">{{ $t('poll.duplicate_options') }}</p>
       <p v-if="error" class="poll-modal__error" role="alert">{{ error }}</p>

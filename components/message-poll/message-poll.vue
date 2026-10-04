@@ -12,9 +12,9 @@
       v-if="showResults"
       :poll="poll"
       :has-voted="hasVoted"
-      :can-change-vote="canChangeVote"
+      :can-cancel-vote="canCancelVote"
       :busy="busy"
-      @change-vote="startVoteChange"
+      @cancel-vote="cancelVote"
     />
     <template v-else-if="poll && !poll.isClosed">
       <b-poll-choices
@@ -26,15 +26,6 @@
         @vote="vote"
       />
       <p class="message-poll__hint">{{ $t(voteHint) }}</p>
-      <b-button
-        v-if="changingVote"
-        class="message-poll__action"
-        small
-        :disabled="busy"
-        @click="changingVote = false"
-      >
-        {{ $t('poll.cancel_vote_change') }}
-      </b-button>
     </template>
     <b-button v-if="canClose" class="message-poll__action" small :disabled="busy" @click="closePoll">
       {{ $t('poll.close') }}
@@ -56,6 +47,8 @@ import BPollResults from '~/components/poll-results/poll-results.vue';
 import BPollChoices from '~/components/poll-choices/poll-choices.vue';
 import { Message } from '~/types/message';
 import {
+  CancelPollVoteMutation,
+  CancelPollVoteMutationVariables,
   ClosePollMutation,
   ClosePollMutationVariables,
   GetPollQuery,
@@ -67,6 +60,7 @@ import {
 import GetPoll from '~/graphql/queries/get-poll.graphql';
 import VotePoll from '~/graphql/mutations/vote-poll.graphql';
 import ClosePoll from '~/graphql/mutations/close-poll.graphql';
+import CancelPollVote from '~/graphql/mutations/cancel-poll-vote.graphql';
 
 @Component({
   name: 'b-message-poll',
@@ -83,7 +77,6 @@ export default class MessagePoll extends Vue {
   error = '';
   requestId = 0;
   pendingOptionIds: number[] = [];
-  changingVote = false;
   closeTimer: ReturnType<typeof setTimeout> | null = null;
 
   get question(): string {
@@ -111,10 +104,10 @@ export default class MessagePoll extends Vue {
       return true;
     }
 
-    return this.poll?.totalVotes != null && !this.changingVote;
+    return this.poll?.totalVotes != null;
   }
 
-  get canChangeVote(): boolean {
+  get canCancelVote(): boolean {
     return this.hasVoted && !!this.poll?.allowChangeVote && !this.poll.isClosed && !this.message.deletedAt;
   }
 
@@ -172,24 +165,13 @@ export default class MessagePoll extends Vue {
   onUserChanged(): void {
     this.poll = null;
     this.pendingOptionIds = [];
-    this.changingVote = false;
     this.fetchPoll();
   }
 
   setPoll(poll: PollPartsFragment): void {
     this.poll = poll;
 
-    if (poll.isClosed || !poll.allowChangeVote) {
-      this.changingVote = false;
-    }
-
-    if (!this.changingVote) {
-      this.pendingOptionIds = [...poll.selectedOptionIds];
-    } else {
-      this.pendingOptionIds = this.pendingOptionIds.filter((id) =>
-        poll.options.some((option) => option.id === id),
-      );
-    }
+    this.pendingOptionIds = [...poll.selectedOptionIds];
 
     this.scheduleRefresh(poll);
   }
@@ -208,13 +190,38 @@ export default class MessagePoll extends Vue {
     }
   }
 
-  startVoteChange(): void {
-    if (!this.canChangeVote || !this.poll) {
+  async cancelVote(): Promise<void> {
+    if (!this.canCancelVote || this.busy) {
       return;
     }
 
-    this.pendingOptionIds = [...this.poll.selectedOptionIds];
-    this.changingVote = true;
+    this.busy = true;
+    this.error = '';
+    ++this.requestId;
+
+    try {
+      const { data } = await this.$apollo.mutate<CancelPollVoteMutation, CancelPollVoteMutationVariables>({
+        mutation: CancelPollVote,
+        variables: {
+          messageId: this.message.id,
+        },
+      });
+
+      if (!data) {
+        throw new Error('No poll returned');
+      }
+
+      ++this.requestId;
+      this.setPoll(data.cancelPollVote);
+    } catch (_error) {
+      await this.fetchPoll();
+
+      if (!this.poll?.isClosed) {
+        this.error = this.$t('poll.cancel_vote_error').toString();
+      }
+    } finally {
+      this.busy = false;
+    }
   }
 
   async fetchPoll(): Promise<void> {
@@ -249,11 +256,11 @@ export default class MessagePoll extends Vue {
       return;
     }
 
-    if (!this.loggedIn || this.busy || !this.poll || this.poll.isClosed) {
+    if (this.votingDisabled || !this.poll || this.poll.isClosed) {
       return;
     }
 
-    if (this.hasVoted && !this.poll.allowChangeVote) {
+    if (this.hasVoted) {
       return;
     }
 
@@ -272,7 +279,6 @@ export default class MessagePoll extends Vue {
       }
 
       ++this.requestId;
-      this.changingVote = false;
       this.setPoll(data.votePoll);
     } catch (_error) {
       await this.fetchPoll();

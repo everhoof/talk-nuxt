@@ -1,7 +1,7 @@
 export default {
   poll: {
     allow_multiple: 'Allow multiple answers',
-    allow_change_vote: 'Allow participants to change their vote',
+    allow_change_vote: 'Allow participants to cancel their vote and vote again',
     set_deadline: 'Set an end time',
     end_time: 'End date and time',
     end_time_error: 'Choose a time in the future.',
@@ -9,8 +9,8 @@ export default {
     closed: 'This poll has ended',
     close: 'End poll',
     close_error: 'Could not end the poll. Try again.',
-    change_vote: 'Change vote',
-    cancel_vote_change: 'Cancel',
+    cancel_vote: 'Cancel vote',
+    cancel_vote_error: 'Could not cancel your vote. Try again.',
     submit_vote: 'Vote',
     multiple_vote_hint: 'Choose one or more answers and click Vote.',
     multiple_results_hint: 'Percentages are based on participants; their sum may exceed 100%.',

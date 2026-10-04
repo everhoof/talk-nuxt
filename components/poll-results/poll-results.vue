@@ -15,13 +15,13 @@
       {{ $t('poll.multiple_results_hint') }}
     </p>
     <b-button
-      v-if="canChangeVote"
+      v-if="canCancelVote"
       class="poll-results__action"
       small
       :disabled="busy"
-      @click="$emit('change-vote')"
+      @click="$emit('cancel-vote')"
     >
-      {{ $t('poll.change_vote') }}
+      {{ $t('poll.cancel_vote') }}
     </b-button>
   </div>
 </template>
@@ -56,7 +56,7 @@ export default class PollResults extends Vue {
     type: Boolean,
     default: false,
   })
-  readonly canChangeVote!: boolean;
+  readonly canCancelVote!: boolean;
 
   @Prop({
     type: Boolean,
