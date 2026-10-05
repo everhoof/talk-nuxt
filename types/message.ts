@@ -40,6 +40,7 @@ export class Message {
   owner: MessagePartsFragment['owner'];
   pictures: MessagePartsFragment['pictures'];
   deletedBy: MessagePartsFragment['deletedBy'];
+  poll: MessagePartsFragment['poll'];
   state: MessageState = MessageState.DELIVERED;
 
   constructor(message: MessagePartsFragment) {
@@ -58,6 +59,7 @@ export class Message {
     this.owner = message.owner ?? null;
     this.pictures = message.pictures ?? [];
     this.deletedBy = message.deletedBy ?? null;
+    this.poll = message.poll ?? null;
   }
 
   static create(content: string, owner: MessagePartsFragment['owner']): Message {

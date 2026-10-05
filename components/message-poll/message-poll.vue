@@ -72,11 +72,11 @@ import CancelPollVote from '~/graphql/mutations/cancel-poll-vote.graphql';
 })
 export default class MessagePoll extends Vue {
   @Prop({ required: true }) message!: Message;
-  poll: PollPartsFragment | null = null;
+  poll: PollPartsFragment | null = this.message.poll ?? null;
   busy = false;
   error = '';
   requestId = 0;
-  pendingOptionIds: number[] = [];
+  pendingOptionIds: number[] = [...(this.message.poll?.selectedOptionIds || [])];
   closeTimer: ReturnType<typeof setTimeout> | null = null;
 
   get question(): string {
@@ -144,6 +144,12 @@ export default class MessagePoll extends Vue {
   }
 
   mounted(): void {
+    if (this.poll) {
+      this.scheduleRefresh(this.poll);
+
+      return;
+    }
+
     this.fetchPoll();
   }
 
@@ -155,8 +161,16 @@ export default class MessagePoll extends Vue {
     }
   }
 
-  @Watch('message.updatedAt')
+  @Watch('message.poll')
   onPollUpdated(): void {
+    if (this.message.poll) {
+      ++this.requestId;
+      this.setPoll(this.message.poll);
+      this.error = '';
+
+      return;
+    }
+
     this.fetchPoll();
   }
 

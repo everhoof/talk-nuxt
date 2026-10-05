@@ -13,6 +13,7 @@ export type Scalars = {
 
 export type Message = {
   __typename?: 'Message';
+  poll?: Maybe<Poll>;
   id: Scalars['Int'];
   ownerId?: Maybe<Scalars['Float']>;
   randomId?: Maybe<Scalars['String']>;
@@ -331,6 +332,7 @@ export type MessagePartsFragment = { __typename?: 'Message' } & Pick<
           >;
         }
     >;
+    poll?: Maybe<{ __typename?: 'Poll' } & PollPartsFragment>;
     pictures: Array<
       { __typename?: 'Picture' } & {
         m: { __typename?: 'PictureRepresentation' } & Pick<
