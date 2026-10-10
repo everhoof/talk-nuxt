@@ -184,6 +184,8 @@ export type PictureRepresentation = {
 export type Poll = {
   __typename?: 'Poll';
   isAnonymous: Scalars['Boolean'];
+  closedAt?: Maybe<Scalars['DateTime']>;
+  voters: Array<PollVoter>;
   messageId: Scalars['Int'];
   question: Scalars['String'];
   allowMultiple: Scalars['Boolean'];
@@ -312,6 +314,15 @@ export enum UserState {
   Offline = 'OFFLINE',
 }
 
+export type PollVoter = {
+  __typename?: 'PollVoter';
+  id: Scalars['Int'];
+  username: Scalars['String'];
+  avatarUrl?: Maybe<Scalars['String']>;
+  votedAt?: Maybe<Scalars['DateTime']>;
+  optionIds: Array<Scalars['Int']>;
+};
+
 export type MessagePartsFragment = { __typename?: 'Message' } & Pick<
   Message,
   | 'id'
@@ -376,6 +387,7 @@ export type OnlinePartsFragment = { __typename?: 'User' } & Pick<
 export type PollPartsFragment = { __typename?: 'Poll' } & Pick<
   Poll,
   | 'isAnonymous'
+  | 'closedAt'
   | 'messageId'
   | 'question'
   | 'allowMultiple'
@@ -385,7 +397,15 @@ export type PollPartsFragment = { __typename?: 'Poll' } & Pick<
   | 'serverTime'
   | 'selectedOptionIds'
   | 'totalVotes'
-> & { options: Array<{ __typename?: 'PollOption' } & Pick<PollOption, 'id' | 'label' | 'votes'>> };
+> & {
+    voters: Array<
+      { __typename?: 'PollVoter' } & Pick<
+        PollVoter,
+        'id' | 'username' | 'avatarUrl' | 'votedAt' | 'optionIds'
+      >
+    >;
+    options: Array<{ __typename?: 'PollOption' } & Pick<PollOption, 'id' | 'label' | 'votes'>>;
+  };
 
 export type UserPartsFragment = { __typename?: 'User' } & Pick<
   User,

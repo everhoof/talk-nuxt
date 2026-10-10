@@ -11,14 +11,7 @@
     }"
     @contextmenu="openContextMenu"
   >
-    <img v-if="avatar" :src="avatar" class="message__avatar" />
-    <div
-      v-else
-      class="message__avatar message__avatar_type_default"
-      :style="{ backgroundColor: avatarColor }"
-    >
-      {{ username && username[0] }}
-    </div>
+    <b-user-avatar class="message__avatar" :username="username" :user-id="ownerId" :src="avatar" />
     <div class="message__content">
       <span v-if="compact" class="message__header">
         <time class="message__timestamp" :datetime="message.createdAt" :title="localDateTimeFull">
@@ -98,10 +91,11 @@ import BContextMenu from '~/components/context-menu/context-menu.vue';
 import BMessageImg from '~/components/message-img/message-img.vue';
 import { Message, MessageState, MessageType } from '~/types/message';
 import BMessagePoll from '~/components/message-poll/message-poll.vue';
+import BUserAvatar from '~/components/user-avatar/user-avatar.vue';
 
 @Component({
   name: 'b-message',
-  components: { BMessageImg, BMessagePoll },
+  components: { BMessageImg, BMessagePoll, BUserAvatar },
 })
 export default class BMessage extends Vue {
   @InjectReactive('message-context-menu')
@@ -123,14 +117,20 @@ export default class BMessage extends Vue {
     );
 
     const mentionRegex = /<@!(\d+):(.+?)>/gm;
+
     message = message.replace(mentionRegex, (_match, p1, p2) => {
       return `<mention data-id="${p1}" data-name="${p2}">@${p2}</mention>`;
     });
 
     const emojiRegex = new RegExp(`:(${this.$accessor.chat.emoji.map(({ name }) => name).join('|')}):`, 'mg');
+
     return message.replace(emojiRegex, (_match, p1) => {
       const emoji = this.$accessor.chat.emoji.find((e) => e.name === p1);
-      if (!emoji) return p1;
+
+      if (!emoji) {
+        return p1;
+      }
+
       return `<img src="/emoji/${emoji.name}.${emoji.ext}" class="message__emoji" title=":${emoji.name}:" width="70px" height="70px" />`;
     });
   }
@@ -138,6 +138,7 @@ export default class BMessage extends Vue {
   get youtubeId(): string | null {
     const regex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
     const matches = this.message.content.match(regex);
+
     return matches?.[1] ?? null;
   }
 
@@ -167,6 +168,7 @@ export default class BMessage extends Vue {
 
   get mentioning(): boolean {
     const regexp = new RegExp(`<mention(.+?)data-id="${this.$accessor.auth.user?.id}"`);
+
     return regexp.test(this.text);
   }
 
@@ -215,7 +217,9 @@ export default class BMessage extends Vue {
     const id = this.ownerId;
     const username = this.username;
 
-    if (!id || !username) return;
+    if (!id || !username) {
+      return;
+    }
 
     this.$accessor.messages.mention({ id, username });
   }

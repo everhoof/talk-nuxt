@@ -1,25 +1,82 @@
 .poll-result-item
-	margin-bottom 12px
+	position relative
+	vertical-spacing(4px)
+	z-index 0
+	padding 4px 0
+	--poll-result-item__color var(--secondary-text)
+	--poll-result-item__count-color var(--secondary-text)
 
 	&__label
 		display flex
 		justify-content space-between
-		gap 12px
-		margin-bottom 6px
+		align-items flex-end
 		font-size 14px
-		color var(--primary-text)
-		overflow-wrap anywhere
+		line-height 1.2
+		horizontal-spacing(12px)
 
-		span:last-child
-			flex-shrink 0
+	&__answer
+		min-width 0
+		padding 6px 0
+		word-wrap break-word
+		overflow-wrap break-word
+
+	&__count
+		display inline-flex
+		justify-content flex-end
+		align-items center
+		flex-shrink 0
+		min-width 4ch
+		color var(--poll-result-item__count-color)
+		font-size 12px
+		font-weight 600
+		line-height 1
+		font-feature-settings 'tnum'
 
 	&__bar
+		overflow hidden
 		height 6px
 		background var(--input-background)
-		border-radius 3px
-		overflow hidden
+		border-radius 5px
 
 	&__fill
 		height 100%
-		background var(--primary)
-		transition width .2s
+		background var(--poll-result-item__color)
+
+	&_state_selected
+		--poll-result-item__color var(--primary)
+		--poll-result-item__count-color var(--accent-text)
+
+		&:before
+			content ''
+			position absolute
+			top -2px
+			right -8px
+			left -8px
+			bottom -2px
+			z-index -1
+			pointer-events none
+			background var(--primary)
+			border-radius 5px
+			opacity .08
+
+	&__meta
+		display flex
+		align-items center
+		flex-shrink 0
+		height 16.8px
+		margin-bottom 6px
+		horizontal-spacing(8px)
+
+.poll-vote-count
+	display inline-flex
+	align-items baseline
+	color var(--secondary-text)
+	font-size 12px
+	line-height 1
+	white-space nowrap
+	horizontal-spacing(4px)
+
+	&__number
+		color var(--primary-text)
+		font-weight 600
+		font-feature-settings 'tnum'

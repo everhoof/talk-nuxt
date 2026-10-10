@@ -6,63 +6,54 @@
       :option="option"
       :total-votes="poll.totalVotes"
       :selected="poll.selectedOptionIds.includes(option.id)"
+      :is-anonymous="poll.isAnonymous"
+      :voters="optionVoters(option.id)"
+      :busy="busy"
+      @voters="$emit('voters')"
     />
-    <p class="poll-results__hint">
-      {{ $t('poll.total', { count: poll.totalVotes }) }}
-      <template v-if="hasVoted"> · {{ $t('poll.voted') }}</template>
-    </p>
-    <p v-if="poll.allowMultiple" class="poll-results__hint">
-      {{ $t('poll.multiple_results_hint') }}
-    </p>
-    <b-button
-      v-if="canCancelVote"
-      class="poll-results__action"
-      small
-      :disabled="busy"
-      @click="$emit('cancel-vote')"
-    >
-      {{ $t('poll.cancel_vote') }}
-    </b-button>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
-import BButton from '~/components/button/button.vue';
 import BPollResultItem from '~/components/poll-result-item/poll-result-item.vue';
 import { PollPartsFragment } from '~/graphql/schema';
 
-@Component({
-  name: 'b-poll-results',
-  components: {
-    BButton,
-    BPollResultItem,
-  },
-})
+@Component({ name: 'b-poll-results', components: { BPollResultItem } })
 export default class PollResults extends Vue {
-  @Prop({
-    type: Object,
-    required: true,
-  })
-  readonly poll!: PollPartsFragment;
+  @Prop({ type: Boolean, default: false }) canViewVoters!: boolean;
+  @Prop({ type: Boolean, default: false }) busy!: boolean;
 
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  readonly hasVoted!: boolean;
+  @Prop({ type: Object, required: true }) readonly poll!: PollPartsFragment;
 
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  readonly canCancelVote!: boolean;
+  optionVoters(optionId: number): PollPartsFragment['voters'] {
+    if (!this.canViewVoters) {
+      return [];
+    }
 
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  readonly busy!: boolean;
+    const voters = this.poll.voters.filter((voter) => voter.optionIds.includes(optionId));
+
+    return voters.sort((firstVoter, secondVoter) => {
+      const firstVoteTime = this.voteTime(firstVoter);
+      const secondVoteTime = this.voteTime(secondVoter);
+
+      return firstVoteTime - secondVoteTime;
+    });
+  }
+
+  voteTime(voter: PollPartsFragment['voters'][number]): number {
+    if (!voter.votedAt) {
+      return 0;
+    }
+
+    const timestamp = Date.parse(voter.votedAt);
+
+    if (Number.isNaN(timestamp)) {
+      return 0;
+    }
+
+    return timestamp;
+  }
 }
 </script>
 

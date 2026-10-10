@@ -4,9 +4,8 @@
     :value="value"
     :options="options"
     :disabled="disabled"
-    :show-submit="showSubmit"
+    :id-prefix="idPrefix"
     @input="$emit('input', $event)"
-    @vote="$emit('vote', $event)"
   />
   <b-poll-single-choice v-else :options="options" :disabled="disabled" @vote="$emit('vote', $event)" />
 </template>
@@ -49,10 +48,6 @@ export default class PollChoices extends Vue {
   })
   readonly disabled!: boolean;
 
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  readonly showSubmit!: boolean;
+  @Prop({ type: String, required: true }) readonly idPrefix!: string;
 }
 </script>

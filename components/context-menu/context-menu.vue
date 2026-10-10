@@ -23,6 +23,7 @@ export default class ContextMenu extends Vue {
   @InjectReactive('user-context-menu') readonly userContextMenu!: ContextMenu | null;
   @InjectReactive('message-context-menu') readonly messageContextMenu!: ContextMenu | null;
   @Prop({ type: String, default: 'body' }) boundariesElement!: string;
+  @Prop({ type: String, default: 'right-start' }) placement!: Popper.Placement;
   @Ref('popper') popperElm!: Element;
 
   popper?: Popper;
@@ -56,7 +57,7 @@ export default class ContextMenu extends Vue {
     }
   }
 
-  open(evt: MouseEvent, contextData = {}) {
+  open(evt: MouseEvent, contextData = {}, reference?: Element) {
     this.contextMenu?.close();
     this.userContextMenu?.close();
     this.messageContextMenu?.close();
@@ -67,8 +68,8 @@ export default class ContextMenu extends Vue {
       this.popper.destroy();
     }
 
-    this.popper = new Popper(this.referenceObject(evt) as any, this.popperElm, {
-      placement: 'right-start',
+    this.popper = new Popper(reference || (this.referenceObject(evt) as any), this.popperElm, {
+      placement: this.placement,
       modifiers: {
         preventOverflow: {
           boundariesElement: document.querySelector(this.boundariesElement) as Element,
@@ -117,6 +118,7 @@ export default class ContextMenu extends Vue {
     if (process.client) {
       document.removeEventListener('click', this.documentClick);
       document.removeEventListener('keydown', this.documentKeyDown);
+
       if (this.popper !== undefined) {
         this.popper.destroy();
       }

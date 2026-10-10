@@ -72,6 +72,8 @@ type PictureRepresentation {
 }
 type Poll {
   isAnonymous: Boolean!
+  closedAt: DateTime
+  voters: [PollVoter!]!
   messageId: Int!
   question: String!
   allowMultiple: Boolean!
@@ -150,4 +152,11 @@ enum UserState {
   ONLINE
   IDLE
   OFFLINE
+}
+type PollVoter {
+  id: Int!
+  username: String!
+  avatarUrl: String
+  votedAt: DateTime
+  optionIds: [Int!]!
 }

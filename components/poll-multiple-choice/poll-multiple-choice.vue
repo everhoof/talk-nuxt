@@ -1,30 +1,32 @@
 <template>
   <div class="poll-multiple-choice">
-    <label v-for="option in options" :key="option.id" class="poll-multiple-choice__choice">
-      <input v-model="selectedOptionIds" type="checkbox" :value="option.id" :disabled="disabled" />
-      <span>{{ option.label }}</span>
-    </label>
-    <b-button
-      v-if="showSubmit"
-      class="poll-multiple-choice__submit"
-      small
-      :disabled="disabled || !selectedOptionIds.length"
-      @click="$emit('vote', selectedOptionIds)"
+    <b-checkbox
+      v-for="option in options"
+      :id="`${idPrefix}-option-${option.id}`"
+      :key="option.id"
+      class="poll-multiple-choice__choice"
+      :class="{
+        'poll-multiple-choice__choice_state_selected': value.includes(option.id),
+        'poll-multiple-choice__choice_state_disabled': disabled,
+      }"
+      :value="value.includes(option.id)"
+      :disabled="disabled"
+      @input="select(option.id, $event)"
     >
-      {{ $t('poll.submit_vote') }}
-    </b-button>
+      {{ option.label }}
+    </b-checkbox>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
-import BButton from '~/components/button/button.vue';
+import BCheckbox from '~/components/checkbox/checkbox.vue';
 import { PollPartsFragment } from '~/graphql/schema';
 
 @Component({
   name: 'b-poll-multiple-choice',
   components: {
-    BButton,
+    BCheckbox,
   },
 })
 export default class PollMultipleChoice extends Vue {
@@ -46,18 +48,16 @@ export default class PollMultipleChoice extends Vue {
   })
   readonly disabled!: boolean;
 
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  readonly showSubmit!: boolean;
+  @Prop({ type: String, required: true }) readonly idPrefix!: string;
 
-  get selectedOptionIds(): number[] {
-    return this.value;
-  }
+  select(id: number, selected: boolean): void {
+    const ids = this.value.filter((optionId) => optionId !== id);
 
-  set selectedOptionIds(value: number[]) {
-    this.$emit('input', value);
+    if (selected) {
+      ids.push(id);
+    }
+
+    this.$emit('input', ids);
   }
 }
 </script>

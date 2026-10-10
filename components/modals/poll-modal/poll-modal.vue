@@ -1,105 +1,138 @@
 <template>
-  <b-modal @close="$emit('close', $event)">
-    <template #title>{{ $t(editing ? 'poll.edit' : 'poll.create') }}</template>
-    <form class="poll-modal" @submit.prevent="submitPoll">
-      <label class="poll-modal__label" for="poll-question">{{ $t('poll.question') }}</label>
-      <input
-        id="poll-question"
-        ref="questionInput"
-        v-model="question"
-        class="poll-modal__input"
-        :placeholder="$t('poll.question_placeholder')"
-        maxlength="300"
-        required
-        :disabled="busy"
-      />
-      <p class="poll-modal__hint">{{ $t('poll.settings_hint') }}</p>
-      <p v-if="editing" class="poll-modal__hint">{{ $t('poll.edit_hint') }}</p>
-      <div v-for="(option, index) in options" :key="index" class="poll-modal__option">
-        <label :for="`poll-option-${index}`" class="poll-modal__label">
-          {{ $t('poll.option', { number: index + 1 }) }}
-        </label>
-        <div class="poll-modal__option-input">
-          <input
-            :id="`poll-option-${index}`"
-            v-model="option.label"
-            class="poll-modal__input"
-            :placeholder="$t('poll.option', { number: index + 1 })"
-            maxlength="100"
-            required
-            :disabled="busy"
-          />
-          <button
-            v-if="options.length > 1"
-            type="button"
-            class="poll-modal__remove"
-            :aria-label="$t('poll.remove_option', { number: index + 1 })"
-            :disabled="busy"
-            @click="removeOption(index)"
-          >
-            <svg-icon name="close" />
-          </button>
+  <b-modal trap-focus :close-label="$t('poll.close_dialog')" @close="$emit('close', $event)">
+    <template #title>{{ $t(titleKey) }}</template>
+    <template #default>
+      <form class="poll-modal" @submit.prevent="submitPoll">
+        <div class="poll-modal__body scrollbar">
+          <div class="poll-modal__field">
+            <label class="poll-modal__label" for="poll-question">
+              {{ $t('poll.question') }}
+              <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="poll-question"
+              ref="questionInput"
+              v-model="question"
+              class="poll-modal__input"
+              :placeholder="$t('poll.question_placeholder')"
+              maxlength="300"
+              required
+              :disabled="fieldsDisabled"
+            />
+          </div>
+          <div class="poll-modal__options" role="group" aria-labelledby="poll-options-label">
+            <div class="poll-modal__options-header">
+              <span id="poll-options-label" class="poll-modal__label">{{ $t('poll.options') }}</span>
+              <span class="poll-modal__count">{{ options.length }} / 20</span>
+            </div>
+            <div class="poll-modal__options-list">
+              <div v-for="(option, index) in options" :key="option.key" class="poll-modal__option">
+                <label :for="`poll-option-${option.key}`" class="poll-modal__option-label">
+                  {{ $t('poll.option', { number: index + 1 }) }}
+                </label>
+                <input
+                  :id="`poll-option-${option.key}`"
+                  v-model="option.label"
+                  class="poll-modal__input"
+                  :placeholder="$t('poll.option', { number: index + 1 })"
+                  maxlength="100"
+                  required
+                  :disabled="fieldsDisabled"
+                />
+                <b-button
+                  v-if="options.length > 1"
+                  type="button"
+                  class="poll-modal__remove"
+                  :aria-label="$t('poll.remove_option', { number: index + 1 })"
+                  :disabled="fieldsDisabled"
+                  @click="removeOption(index)"
+                >
+                  <svg-icon name="close" aria-hidden="true" />
+                </b-button>
+              </div>
+            </div>
+            <div>
+              <b-poll-button type="button" secondary :disabled="addOptionDisabled" @click="addOption">
+                <svg-icon name="plus" aria-hidden="true" />
+                <span>{{ $t('poll.add_option') }}</span>
+              </b-poll-button>
+            </div>
+          </div>
+          <p v-if="duplicateOptions" class="poll-modal__error" role="alert">
+            {{ $t('poll.duplicate_options') }}
+          </p>
+          <p v-if="editing" class="poll-modal__hint">{{ $t('poll.edit_hint') }}</p>
+          <div class="poll-modal__settings">
+            <b-switch
+              id="poll-is-anonymous"
+              class="poll-modal__setting"
+              :checked.sync="isAnonymous"
+              :disabled="anonymityDisabled"
+            >
+              {{ $t('poll.anonymous') }}
+            </b-switch>
+            <p v-if="isAnonymous" class="poll-modal__hint">{{ $t('poll.anonymous_hint') }}</p>
+            <p v-if="editing" class="poll-modal__hint">{{ $t('poll.anonymous_immutable') }}</p>
+            <b-switch
+              id="poll-allow-multiple"
+              class="poll-modal__setting"
+              :checked.sync="allowMultiple"
+              :disabled="fieldsDisabled"
+            >
+              {{ $t('poll.allow_multiple') }}
+            </b-switch>
+            <b-switch
+              id="poll-allow-change-vote"
+              class="poll-modal__setting"
+              :checked.sync="allowChangeVote"
+              :disabled="fieldsDisabled"
+            >
+              {{ $t('poll.allow_change_vote') }}
+            </b-switch>
+            <b-switch
+              id="poll-has-deadline"
+              class="poll-modal__setting"
+              :checked.sync="hasDeadline"
+              :disabled="deadlineDisabled"
+            >
+              {{ $t('poll.set_deadline') }}
+            </b-switch>
+            <div v-if="hasDeadline" class="poll-modal__field">
+              <label for="poll-ends-at" class="poll-modal__label">
+                {{ $t('poll.end_time') }}
+                <span aria-hidden="true">*</span>
+              </label>
+              <input
+                id="poll-ends-at"
+                v-model="endTime"
+                class="poll-modal__input"
+                type="datetime-local"
+                :min="minEndTime"
+                :disabled="deadlineDisabled"
+                :aria-invalid="!validDeadline"
+                :aria-describedby="deadlineErrorId"
+                required
+              />
+            </div>
+            <p
+              v-if="hasDeadline && !validDeadline"
+              id="poll-deadline-error"
+              class="poll-modal__error"
+              role="alert"
+            >
+              {{ $t('poll.end_time_error') }}
+            </p>
+          </div>
+          <p v-if="error" class="poll-modal__error" role="alert">{{ error }}</p>
         </div>
-      </div>
-      <b-button type="button" small :disabled="busy || options.length >= 20" @click="addOption">
-        {{ $t('poll.add_option') }}
-      </b-button>
-      <div class="poll-modal__settings">
-        <b-switch
-          id="poll-is-anonymous"
-          class="poll-modal__setting"
-          :checked.sync="isAnonymous"
-          :disabled="busy || !ready || editing"
-          >{{ $t('poll.anonymous') }}</b-switch
-        >
-        <p v-if="isAnonymous" class="poll-modal__hint">{{ $t('poll.anonymous_hint') }}</p>
-        <p v-if="editing" class="poll-modal__hint">{{ $t('poll.anonymous_immutable') }}</p>
-        <b-switch
-          id="poll-allow-multiple"
-          class="poll-modal__setting"
-          :checked.sync="allowMultiple"
-          :disabled="busy"
-        >
-          {{ $t('poll.allow_multiple') }}
-        </b-switch>
-        <b-switch
-          id="poll-allow-change-vote"
-          class="poll-modal__setting"
-          :checked.sync="allowChangeVote"
-          :disabled="busy"
-        >
-          {{ $t('poll.allow_change_vote') }}
-        </b-switch>
-        <b-switch
-          id="poll-has-deadline"
-          class="poll-modal__setting"
-          :checked.sync="hasDeadline"
-          :disabled="busy || closed"
-        >
-          {{ $t('poll.set_deadline') }}
-        </b-switch>
-        <div v-if="hasDeadline">
-          <label for="poll-ends-at" class="poll-modal__label">{{ $t('poll.end_time') }}</label>
-          <input
-            id="poll-ends-at"
-            v-model="endTime"
-            class="poll-modal__input"
-            type="datetime-local"
-            :min="minEndTime"
-            :disabled="busy || closed"
-            required
-          />
-          <p v-if="endTime && !validDeadline" class="poll-modal__error">{{ $t('poll.end_time_error') }}</p>
+        <div class="poll-modal__actions">
+          <b-poll-button type="button" secondary @click="$emit('close')">
+            {{ $t('poll.cancel') }}
+          </b-poll-button>
+          <b-poll-button type="submit" :disabled="submitDisabled">{{ $t(submitLabel) }}</b-poll-button>
         </div>
-      </div>
-      <p v-if="duplicateOptions" class="poll-modal__error" role="alert">{{ $t('poll.duplicate_options') }}</p>
-      <p v-if="error" class="poll-modal__error" role="alert">{{ error }}</p>
-      <div class="poll-modal__submit">
-        <b-button class="poll-modal__publish" type="submit" width-full :disabled="busy || !valid">
-          {{ $t(submitLabel) }}
-        </b-button>
-      </div>
-    </form>
+      </form>
+    </template>
   </b-modal>
 </template>
 
@@ -108,6 +141,7 @@ import { Component, Ref, Vue } from 'nuxt-property-decorator';
 import { DateTime } from 'luxon';
 import BModal from '~/components/modals/modal/modal.vue';
 import BButton from '~/components/button/button.vue';
+import BPollButton from '~/components/poll-button/poll-button.vue';
 import BSwitch from '~/components/switch/switch.vue';
 import CreatePoll from '~/graphql/mutations/create-poll.graphql';
 import UpdatePoll from '~/graphql/mutations/update-poll.graphql';
@@ -124,6 +158,7 @@ import { Message } from '~/types/message';
 
 interface PollFormOption {
   id: number | null;
+  key: number;
   label: string;
 }
 
@@ -132,19 +167,30 @@ interface PollFormOption {
   components: {
     BModal,
     BButton,
+    BPollButton,
     BSwitch,
   },
 })
 export default class PollModal extends Vue {
   @Ref() questionInput!: HTMLInputElement;
+
   question = '';
   options: PollFormOption[] = [
     {
       id: null,
       label: '',
+      key: 0,
+    },
+    {
+      id: null,
+      label: '',
+      key: 1,
     },
   ];
+  nextKey = 2;
   isAnonymous = false;
+  clockTimer: ReturnType<typeof setInterval> | null = null;
+  now = Date.now();
   busy = false;
   ready = false;
   error = '';
@@ -158,6 +204,42 @@ export default class PollModal extends Vue {
 
   get editing(): boolean {
     return this.$route.name === 'modal_poll_edit';
+  }
+
+  get titleKey(): string {
+    if (this.editing) {
+      return 'poll.edit';
+    }
+
+    return 'poll.create';
+  }
+
+  get fieldsDisabled(): boolean {
+    return this.busy || !this.ready;
+  }
+
+  get addOptionDisabled(): boolean {
+    return this.fieldsDisabled || this.options.length >= 20;
+  }
+
+  get anonymityDisabled(): boolean {
+    return this.fieldsDisabled || this.editing;
+  }
+
+  get deadlineDisabled(): boolean {
+    return this.fieldsDisabled || this.closed;
+  }
+
+  get submitDisabled(): boolean {
+    return this.busy || !this.valid;
+  }
+
+  get deadlineErrorId(): string | undefined {
+    if (this.validDeadline) {
+      return undefined;
+    }
+
+    return 'poll-deadline-error';
   }
 
   get submitLabel(): string {
@@ -181,12 +263,17 @@ export default class PollModal extends Vue {
   }
 
   async mounted(): Promise<void> {
+    this.clockTimer = setInterval(() => {
+      this.now = Date.now();
+      this.minEndTime = DateTime.local().toFormat("yyyy-MM-dd'T'HH:mm");
+    }, 1000);
     this.minEndTime = DateTime.local().toFormat("yyyy-MM-dd'T'HH:mm");
     this.endTime = DateTime.local()
       .plus({
         hours: 1,
       })
       .toFormat("yyyy-MM-dd'T'HH:mm");
+
     let permitted = this.$accessor.auth.can.createOwn('poll').granted;
 
     if (this.editing) {
@@ -208,6 +295,7 @@ export default class PollModal extends Vue {
     }
 
     this.ready = true;
+    await this.$nextTick();
     this.questionInput.focus();
   }
 
@@ -222,20 +310,25 @@ export default class PollModal extends Vue {
         },
         fetchPolicy: 'no-cache',
       });
-      this.question = data.getPoll.question;
-      this.options = data.getPoll.options.map(({ id, label }) => ({
+
+      const poll = data.getPoll;
+
+      this.question = poll.question;
+      this.options = poll.options.map(({ id, label }, key) => ({
         id,
         label,
+        key,
       }));
-      this.isAnonymous = data.getPoll.isAnonymous;
-      this.allowMultiple = data.getPoll.allowMultiple;
-      this.allowChangeVote = data.getPoll.allowChangeVote;
-      this.closed = data.getPoll.isClosed;
-      this.originalEndsAt = data.getPoll.endsAt ?? null;
-      this.hasDeadline = !!data.getPoll.endsAt;
+      this.nextKey = this.options.length;
+      this.isAnonymous = poll.isAnonymous;
+      this.allowMultiple = poll.allowMultiple;
+      this.allowChangeVote = poll.allowChangeVote;
+      this.closed = poll.isClosed;
+      this.originalEndsAt = poll.endsAt ?? null;
+      this.hasDeadline = !!poll.endsAt;
 
-      if (data.getPoll.endsAt) {
-        this.endTime = DateTime.fromISO(data.getPoll.endsAt).toFormat("yyyy-MM-dd'T'HH:mm");
+      if (poll.endsAt) {
+        this.endTime = DateTime.fromISO(poll.endsAt).toFormat("yyyy-MM-dd'T'HH:mm");
       }
 
       return true;
@@ -248,32 +341,66 @@ export default class PollModal extends Vue {
     }
   }
 
+  beforeDestroy(): void {
+    if (this.clockTimer) {
+      clearInterval(this.clockTimer);
+    }
+  }
+
+  async focusOption(index: number): Promise<void> {
+    await this.$nextTick();
+
+    const inputs = this.$el.querySelectorAll<HTMLInputElement>('.poll-modal__option input');
+    const input = inputs[index];
+    input?.focus();
+  }
+
   addOption(): void {
-    this.options.push({
-      id: null,
-      label: '',
-    });
+    if (this.addOptionDisabled) {
+      return;
+    }
+
+    this.options.push({ id: null, label: '', key: this.nextKey });
+    this.nextKey += 1;
+    this.focusOption(this.options.length - 1);
   }
 
   removeOption(index: number): void {
+    if (this.fieldsDisabled || this.options.length <= 1) {
+      return;
+    }
+
     this.options.splice(index, 1);
+    const nextIndex = Math.min(index, this.options.length - 1);
+    this.focusOption(nextIndex);
   }
 
   get valid(): boolean {
-    const validQuestion = !!this.question.trim() && this.question.length <= 300;
-    const validOptionCount = this.options.length >= 1 && this.options.length <= 20;
-    const validOptionLabels = this.options.every(
-      (option) => !!option.label.trim() && option.label.length <= 100,
-    );
+    if (!this.ready || !this.validDeadline) {
+      return false;
+    }
 
-    return (
-      this.ready &&
-      this.validDeadline &&
-      validQuestion &&
-      validOptionCount &&
-      validOptionLabels &&
-      !this.duplicateOptions
-    );
+    const question = this.question.trim();
+
+    if (!question || this.question.length > 300) {
+      return false;
+    }
+
+    const optionCount = this.options.length;
+
+    if (optionCount < 1 || optionCount > 20) {
+      return false;
+    }
+
+    for (const option of this.options) {
+      const label = option.label.trim();
+
+      if (!label || option.label.length > 100) {
+        return false;
+      }
+    }
+
+    return !this.duplicateOptions;
   }
 
   get validDeadline(): boolean {
@@ -283,7 +410,11 @@ export default class PollModal extends Vue {
 
     const deadline = DateTime.fromISO(this.endTime);
 
-    return deadline.isValid && deadline.toMillis() > Date.now();
+    if (!deadline.isValid) {
+      return false;
+    }
+
+    return deadline.toMillis() > this.now;
   }
 
   get endsAt(): string | null {
@@ -299,13 +430,72 @@ export default class PollModal extends Vue {
   }
 
   get duplicateOptions(): boolean {
-    const options = this.options.map((option) => option.label.trim().toLowerCase()).filter(Boolean);
+    const labels = new Set<string>();
 
-    return new Set(options).size !== options.length;
+    for (const option of this.options) {
+      const label = option.label.trim().toLowerCase();
+
+      if (!label) {
+        continue;
+      }
+
+      if (labels.has(label)) {
+        return true;
+      }
+
+      labels.add(label);
+    }
+
+    return false;
+  }
+
+  get pollSettings(): Pick<
+    CreatePollMutationVariables,
+    'question' | 'allowMultiple' | 'allowChangeVote' | 'endsAt'
+  > {
+    return {
+      question: this.question.trim(),
+      allowMultiple: this.allowMultiple,
+      allowChangeVote: this.allowChangeVote,
+      endsAt: this.endsAt,
+    };
+  }
+
+  async createPollMessage(): Promise<CreatePollMutation['createPoll'] | undefined> {
+    const options = this.options.map((option) => option.label.trim());
+    const variables: CreatePollMutationVariables = {
+      ...this.pollSettings,
+      isAnonymous: this.isAnonymous,
+      options,
+    };
+    const { data } = await this.$apollo.mutate<CreatePollMutation, CreatePollMutationVariables>({
+      mutation: CreatePoll,
+      variables,
+    });
+
+    return data?.createPoll;
+  }
+
+  async updatePollMessage(): Promise<UpdatePollMutation['updatePoll'] | undefined> {
+    const options = this.options.map(({ id, label }) => ({
+      id,
+      label: label.trim(),
+    }));
+    const variables: UpdatePollMutationVariables = {
+      ...this.pollSettings,
+      messageId: Number(this.$route.params.id),
+      options,
+    };
+    const { data } = await this.$apollo.mutate<UpdatePollMutation, UpdatePollMutationVariables>({
+      mutation: UpdatePoll,
+      variables,
+    });
+
+    return data?.updatePoll;
   }
 
   async submitPoll(): Promise<void> {
-    if (this.busy || !this.valid) {
+    if (this.submitDisabled) {
       return;
     }
 
@@ -313,37 +503,12 @@ export default class PollModal extends Vue {
     this.error = '';
 
     try {
-      const variables = {
-        question: this.question.trim(),
-        allowMultiple: this.allowMultiple,
-        allowChangeVote: this.allowChangeVote,
-        endsAt: this.endsAt,
-      };
       let message: CreatePollMutation['createPoll'] | undefined;
 
       if (this.editing) {
-        const { data } = await this.$apollo.mutate<UpdatePollMutation, UpdatePollMutationVariables>({
-          mutation: UpdatePoll,
-          variables: {
-            ...variables,
-            messageId: Number(this.$route.params.id),
-            options: this.options.map(({ id, label }) => ({
-              id,
-              label: label.trim(),
-            })),
-          },
-        });
-        message = data?.updatePoll;
+        message = await this.updatePollMessage();
       } else {
-        const { data } = await this.$apollo.mutate<CreatePollMutation, CreatePollMutationVariables>({
-          mutation: CreatePoll,
-          variables: {
-            ...variables,
-            isAnonymous: this.isAnonymous,
-            options: this.options.map((option) => option.label.trim()),
-          },
-        });
-        message = data?.createPoll;
+        message = await this.createPollMessage();
       }
 
       if (!message) {
