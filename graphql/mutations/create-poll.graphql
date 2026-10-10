@@ -1,5 +1,6 @@
 #import "../fragments/message-parts.graphql"
 mutation CreatePoll(
+  $isAnonymous: Boolean
   $question: String!
   $options: [String!]!
   $allowMultiple: Boolean
@@ -7,6 +8,7 @@ mutation CreatePoll(
   $endsAt: DateTime
 ) {
   createPoll(
+    isAnonymous: $isAnonymous
     question: $question
     options: $options
     allowMultiple: $allowMultiple

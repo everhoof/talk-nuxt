@@ -1,4 +1,5 @@
 fragment PollParts on Poll {
+  isAnonymous
   messageId
   question
   allowMultiple

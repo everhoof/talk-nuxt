@@ -46,6 +46,15 @@
       </b-button>
       <div class="poll-modal__settings">
         <b-switch
+          id="poll-is-anonymous"
+          class="poll-modal__setting"
+          :checked.sync="isAnonymous"
+          :disabled="busy || !ready || editing"
+          >{{ $t('poll.anonymous') }}</b-switch
+        >
+        <p v-if="isAnonymous" class="poll-modal__hint">{{ $t('poll.anonymous_hint') }}</p>
+        <p v-if="editing" class="poll-modal__hint">{{ $t('poll.anonymous_immutable') }}</p>
+        <b-switch
           id="poll-allow-multiple"
           class="poll-modal__setting"
           :checked.sync="allowMultiple"
@@ -135,6 +144,7 @@ export default class PollModal extends Vue {
       label: '',
     },
   ];
+  isAnonymous = false;
   busy = false;
   ready = false;
   error = '';
@@ -217,6 +227,7 @@ export default class PollModal extends Vue {
         id,
         label,
       }));
+      this.isAnonymous = data.getPoll.isAnonymous;
       this.allowMultiple = data.getPoll.allowMultiple;
       this.allowChangeVote = data.getPoll.allowChangeVote;
       this.closed = data.getPoll.isClosed;
@@ -328,6 +339,7 @@ export default class PollModal extends Vue {
           mutation: CreatePoll,
           variables: {
             ...variables,
+            isAnonymous: this.isAnonymous,
             options: this.options.map((option) => option.label.trim()),
           },
         });

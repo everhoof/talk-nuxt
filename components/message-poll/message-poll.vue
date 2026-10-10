@@ -1,6 +1,6 @@
 <template>
   <section class="message-poll" :aria-label="$t('poll.title')">
-    <span class="message-poll__caption">{{ $t('poll.title') }}</span>
+    <span class="message-poll__caption">{{ $t(captionKey) }}</span>
     <h3 class="message-poll__question">{{ question }}</h3>
     <p v-if="poll && poll.isClosed" class="message-poll__status">
       {{ $t('poll.closed') }}
@@ -119,6 +119,11 @@ export default class MessagePoll extends Vue {
       !this.message.deletedAt &&
       this.$accessor.auth.can.updateAny('poll').granted
     );
+  }
+
+  get captionKey(): string {
+    if (this.poll?.isAnonymous) return this.poll.isClosed ? 'poll.anonymous_closed' : 'poll.anonymous';
+    return this.poll?.isClosed ? 'poll.closed' : 'poll.title';
   }
 
   get voteHint(): string {

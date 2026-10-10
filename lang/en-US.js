@@ -1,5 +1,9 @@
 export default {
   poll: {
+    anonymous_immutable: 'Anonymity cannot be changed after publication.',
+    anonymous_hint: 'Participant names are hidden, including from moderators.',
+    anonymous_closed: 'Anonymous poll ended',
+    anonymous: 'Anonymous poll',
     allow_multiple: 'Allow multiple answers',
     allow_change_vote: 'Allow participants to cancel their vote and vote again',
     set_deadline: 'Set an end time',

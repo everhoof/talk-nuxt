@@ -127,6 +127,7 @@ export type MutationInvalidateTokenByIdArgs = {
 
 export type MutationCreatePollArgs = {
   question: Scalars['String'];
+  isAnonymous?: Maybe<Scalars['Boolean']>;
   allowMultiple?: Maybe<Scalars['Boolean']>;
   allowChangeVote?: Maybe<Scalars['Boolean']>;
   endsAt?: Maybe<Scalars['DateTime']>;
@@ -182,6 +183,7 @@ export type PictureRepresentation = {
 
 export type Poll = {
   __typename?: 'Poll';
+  isAnonymous: Scalars['Boolean'];
   messageId: Scalars['Int'];
   question: Scalars['String'];
   allowMultiple: Scalars['Boolean'];
@@ -373,6 +375,7 @@ export type OnlinePartsFragment = { __typename?: 'User' } & Pick<
 
 export type PollPartsFragment = { __typename?: 'Poll' } & Pick<
   Poll,
+  | 'isAnonymous'
   | 'messageId'
   | 'question'
   | 'allowMultiple'
@@ -442,6 +445,7 @@ export type CreateMessageMutation = { __typename?: 'Mutation' } & {
 };
 
 export type CreatePollMutationVariables = Exact<{
+  isAnonymous?: Maybe<Scalars['Boolean']>;
   question: Scalars['String'];
   options: Array<Scalars['String']>;
   allowMultiple?: Maybe<Scalars['Boolean']>;
