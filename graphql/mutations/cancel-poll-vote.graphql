@@ -1,0 +1,7 @@
+#import "../fragments/poll-parts.graphql"
+
+mutation CancelPollVote($messageId: Int!) {
+  cancelPollVote(messageId: $messageId) {
+    ...PollParts
+  }
+}

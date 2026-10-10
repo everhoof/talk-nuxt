@@ -1,0 +1,6 @@
+#import "../fragments/poll-parts.graphql"
+mutation ClosePoll($messageId: Int!) {
+  closePoll(messageId: $messageId) {
+    ...PollParts
+  }
+}

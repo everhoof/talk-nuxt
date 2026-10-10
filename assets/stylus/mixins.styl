@@ -70,3 +70,15 @@ defaultShadow(color = var(--shadow))
 compact()
 	.page_style_compact &
 		{block}
+
+// Spacing for browsers without Grid or flexbox gap support.
+vertical-spacing($spacing)
+	display flex
+	flex-direction column
+
+	> :not(:first-child)
+		margin-top $spacing
+
+horizontal-spacing($spacing)
+	> * + *
+		margin-left $spacing

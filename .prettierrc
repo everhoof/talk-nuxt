@@ -2,5 +2,13 @@
   "singleQuote": true,
   "trailingComma": "all",
   "printWidth": 110,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "overrides": [
+    {
+      "files": "*.vue",
+      "options": {
+        "htmlWhitespaceSensitivity": "ignore"
+      }
+    }
+  ]
 }

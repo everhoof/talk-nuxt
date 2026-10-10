@@ -9,14 +9,12 @@
       class="users-list__item"
       @contextmenu.native="openContextMenu($event, i)"
     >
-      <img v-if="user.avatar" :src="user.avatar.s.link" class="users-list__avatar" alt="" />
-      <div
-        v-else
-        class="users-list__avatar users-list__avatar_type_default"
-        :style="{ backgroundColor: avatarColor(user.id) }"
-      >
-        {{ user.username[0] }}
-      </div>
+      <b-user-avatar
+        class="users-list__avatar"
+        :username="user.username"
+        :user-id="user.id"
+        :src="user.avatar ? user.avatar.s.link : null"
+      />
       <div class="users-list__info">
         <h3 class="users-list__username">{{ user.username }}</h3>
       </div>
@@ -28,21 +26,18 @@
 <script lang="ts">
 import { Component, InjectReactive, Prop, Vue } from 'nuxt-property-decorator';
 import type { OnlinePartsFragment } from '~/graphql/schema';
-import { getUserColor } from '~/tools/util';
 import BContextMenu from '~/components/context-menu/context-menu.vue';
+import BUserAvatar from '~/components/user-avatar/user-avatar.vue';
 
 @Component({
   name: 'b-users-list',
+  components: { BUserAvatar },
 })
 export default class UsersList extends Vue {
   @Prop({ required: true }) users!: OnlinePartsFragment[];
 
   @InjectReactive('user-context-menu')
   readonly contextMenu!: BContextMenu;
-
-  get avatarColor() {
-    return (id: number): string => getUserColor(id);
-  }
 
   openContextMenu(event: MouseEvent, index: number) {
     event.preventDefault();

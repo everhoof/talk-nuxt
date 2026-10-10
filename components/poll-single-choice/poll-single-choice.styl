@@ -1,0 +1,27 @@
+.poll-single-choice
+	vertical-spacing(6px)
+
+	&__option
+		width 100%
+		padding 8px 12px
+		color var(--primary-text)
+		font inherit
+		font-size 14px
+		text-align left
+		word-wrap break-word
+		cursor pointer
+		background var(--input-background)
+		border 1px solid var(--input-border)
+		border-radius 5px
+		overflow-wrap break-word
+
+		&:hover:not(:disabled)
+			background var(--background-hover)
+
+		&:focus
+			outline 2px solid var(--primary)
+			outline-offset 2px
+
+		&:disabled
+			cursor default
+			opacity .5
