@@ -1,12 +1,18 @@
 <template>
   <!-- begin .modal-->
-  <div class="modal" :class="modifiers" @click.self="onOverlayClick">
+  <div class="modal" :class="modifiers" @click.self="onOverlayClick" @keydown="onKeydown">
     <b-tile class="tile_padding_medium tile_borders_all modal__tile">
       <div class="modal__header">
         <h3 class="modal__title">
           <slot name="title" />
         </h3>
-        <button v-if="!noCloseButton" class="modal__close" @click="$emit('close', $event)">
+        <button
+          v-if="!noCloseButton"
+          type="button"
+          :aria-label="closeLabel"
+          class="modal__close"
+          @click="$emit('close', $event)"
+        >
           <svg-icon name="close" />
         </button>
       </div>
@@ -26,6 +32,89 @@ import BTile from '~/components/tile/tile.vue';
   components: { BTile },
 })
 export default class Modal extends Vue {
+  @Prop({ type: String, default: 'Закрыть' }) closeLabel!: string;
+  @Prop({ type: Boolean, default: false }) trapFocus!: boolean;
+
+  previousFocus: HTMLElement | null = null;
+
+  mounted(): void {
+    if (!this.trapFocus) {
+      return;
+    }
+
+    this.previousFocus = document.activeElement as HTMLElement;
+    this.$nextTick(() => {
+      const firstControl = this.$el.querySelector<HTMLElement>('button:not(:disabled), input:not(:disabled)');
+      firstControl?.focus();
+    });
+  }
+
+  beforeDestroy(): void {
+    if (!this.trapFocus || !this.previousFocus) {
+      return;
+    }
+
+    if (document.documentElement.contains(this.previousFocus)) {
+      this.previousFocus.focus();
+    }
+  }
+
+  onKeydown(event: KeyboardEvent): void {
+    if (!this.trapFocus) {
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.$emit('close', event);
+
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      this.trapTabFocus(event);
+    }
+  }
+
+  focusableElements(): HTMLElement[] {
+    const selector = [
+      'button:not(:disabled)',
+      'input:not(:disabled)',
+      'select:not(:disabled)',
+      'textarea:not(:disabled)',
+      'a[href]',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(', ');
+    const elements = Array.from(this.$el.querySelectorAll<HTMLElement>(selector));
+
+    return elements.filter((element) => element.getClientRects().length > 0);
+  }
+
+  trapTabFocus(event: KeyboardEvent): void {
+    const elements = this.focusableElements();
+    const first = elements[0];
+    const last = elements[elements.length - 1];
+
+    if (!first || !last) {
+      return;
+    }
+
+    const focusedElement = document.activeElement;
+
+    if (event.shiftKey && focusedElement === first) {
+      event.preventDefault();
+      last.focus();
+
+      return;
+    }
+
+    if (!event.shiftKey && focusedElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   @Prop({
     required: false,
     type: Boolean,
@@ -42,7 +131,11 @@ export default class Modal extends Vue {
 
   get modifiers(): string[] {
     const modifiers: string[] = [];
-    if (this.noImplicitClose) modifiers.push('modal_no_implicit-close');
+
+    if (this.noImplicitClose) {
+      modifiers.push('modal_no_implicit-close');
+    }
+
     return modifiers;
   }
 

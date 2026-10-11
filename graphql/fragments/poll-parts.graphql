@@ -1,0 +1,25 @@
+fragment PollParts on Poll {
+  isAnonymous
+  closedAt
+  voters {
+    id
+    username
+    avatarUrl
+    votedAt
+    optionIds
+  }
+  messageId
+  question
+  allowMultiple
+  allowChangeVote
+  endsAt
+  isClosed
+  serverTime
+  selectedOptionIds
+  options {
+    id
+    label
+    votes
+  }
+  totalVotes
+}

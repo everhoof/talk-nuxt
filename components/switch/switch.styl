@@ -5,6 +5,7 @@ $switch-base-size = $switch-size + 4
 $switch-margin = 10px 0
 
 .switch
+	position relative
 	display block
 	margin 16px 0
 	font-size 16px
@@ -20,7 +21,15 @@ $switch-margin = 10px 0
 			margin $switch-margin
 
 	&__input
-		display none
+		position absolute
+		width 1px
+		height 1px
+		overflow hidden
+		clip rect(0, 0, 0, 0)
+		white-space nowrap
+
+		&:focus-visible + ^[0]__label:before
+			box-shadow 0 0 0 2px var(--primary-text)
 
 		&:checked
 			& +
@@ -28,7 +37,7 @@ $switch-margin = 10px 0
 					background $switch-checked-color
 
 				& ^[0]__label:after
-					left $switch-base-size + (($switch-size / 2) - ($switch-base-size / 2)) * 2
+					left ($switch-base-size + ($switch-size - $switch-base-size) / 2)
 					background $switch-checked-color
 
 			&:disabled
@@ -50,10 +59,10 @@ $switch-margin = 10px 0
 		position relative
 		display inline-block
 		vertical-align bottom
-		min-height $switch-size
+		min-height $switch-base-size
 		margin-bottom 0
 		padding 0
-		line-height $switch-size
+		line-height $switch-base-size
 		cursor pointer
 
 		&:not(:empty)
@@ -67,16 +76,16 @@ $switch-margin = 10px 0
 			defaultTransition()
 
 		&:after
-			top 0
-			left 0
+			top (($switch-base-size - $switch-size) / 2)
+			left (($switch-base-size - $switch-size) / 2)
 			width $switch-size
 			height $switch-size
 			background #FFFFFF
 			defaultShadow()
 
 		&:before
-			top ($switch-size / 2) - ($switch-base-size / 2)
-			left ($switch-size / 2) - ($switch-base-size / 2)
+			top 0
+			left 0
 			width $switch-size + $switch-base-size
 			height $switch-base-size
 			background $switch-unchecked-color

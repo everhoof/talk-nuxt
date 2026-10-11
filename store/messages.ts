@@ -42,6 +42,11 @@ export const state = () => ({
 
 export const mutations = mutationTree(state, {
   SET_RAW_MESSAGES: (_state, payload: Message[]) => (_state.rawMessages = payload),
+  CLEAR_POLL_DATA: (_state) => {
+    for (const message of _state.rawMessages) {
+      message.poll = null;
+    }
+  },
   ADD_RAW_MESSAGE_TO_START: (_state, payload: Message) => _state.rawMessages.unshift(payload),
   ADD_RAW_MESSAGE_TO_END: (_state, payload: Message) => _state.rawMessages.push(payload),
   ADD_RAW_MESSAGES_TO_START: (_state, payload: Message[]) => {
@@ -100,6 +105,15 @@ export const actions = actionTree(
     },
 
     nuxtClientInit({ dispatch, commit }) {
+      this.watch(
+        () => {
+          const auth = this.app.$accessor.auth;
+
+          return `${auth.loggedIn}:${auth.userId}`;
+        },
+        () => commit('CLEAR_POLL_DATA'),
+      );
+
       dispatch('subscribeMessageCreated');
       dispatch('subscribeMessageDeleted');
       dispatch('subscribeMessageUpdated');
@@ -224,10 +238,17 @@ export const actions = actionTree(
             variables.lastId = state.lastDeliveredId;
           }
 
+          const auth = this.app.$accessor.auth;
+          const userId = auth.userId;
+          const loggedIn = auth.loggedIn;
           const response = await client.query<GetMessagesQuery, GetMessagesQueryVariables>({
             query: GetMessages,
             variables,
           });
+
+          if (userId !== auth.userId || loggedIn !== auth.loggedIn) {
+            continue;
+          }
 
           const messages = response.data.getMessages;
           for (let i = 0; i < messages.length; ++i) {
@@ -240,7 +261,7 @@ export const actions = actionTree(
           }
 
           const filteredMessages = messages.filter((message) => {
-            return message.type === MessageType.GENERAL || message.type === MessageType.DONATION;
+            return [MessageType.GENERAL, MessageType.DONATION, MessageType.POLL].includes(message.type);
           });
 
           if (filteredMessages.length > 0 && process.client && document.visibilityState === 'hidden') {

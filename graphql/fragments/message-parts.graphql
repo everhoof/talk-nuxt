@@ -1,3 +1,5 @@
+#import "./poll-parts.graphql"
+
 fragment MessageParts on Message {
     id
     randomId
@@ -17,6 +19,9 @@ fragment MessageParts on Message {
     schema
     type
     json
+    poll {
+        ...PollParts
+    }
     pictures {
         m {
             id

@@ -3,44 +3,51 @@ schema {
   mutation: Mutation
   subscription: Subscription
 }
-type Query {
-  getCurrentUser: User!
-  getUserById(id: Int!): User!
-  getOnline: [User!]!
-  searchUsers(query: String!): [User!]!
-  getMessages(count: Int = 100, page: Int = 1, lastId: Int, fromDateTime: String, reverse: Boolean = false, poll: Boolean = false): [Message!]!
-  isUsernameFree(username: String!): Boolean!
-  getTokenByDiscordId(id: String!): Token
-  getTokens: [Token!]!
-  getGrants: String!
-  getHello: String!
-  version: String!
-  getPictureById(pictureId: Int!): Picture!
-}
-type User {
-  id: Int!
-  username: String
-  avatarId: String
-  state: UserState!
-  wasOnlineAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  roles: [Role!]!
-  avatar: Picture
-  emailConfirmed: Boolean
-  muted: Boolean
-  email: String
-}
-enum UserState {
-  ONLINE
-  IDLE
-  OFFLINE
-}
 """A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format."""
 scalar DateTime
-type Role {
+type Message {
+  poll: Poll
   id: Int!
-  name: String!
+  ownerId: Float
+  randomId: String
+  system: Boolean!
+  content: String!
+  username: String
+  deletedById: Float
+  schema: String!
+  json: String
+  type: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+  owner: User
+  pictures: [Picture!]!
+  deletedBy: User
+}
+type Mutation {
+  updateOnlineStatus: Boolean!
+  updateAvatar(pictureId: Int!): User!
+  punish(userId: Int!, type: PunishmentTypes!, reason: String!, duration: Int): User!
+  unpunish(userId: Int!): User!
+  updateMessage(messageId: Int!, content: String): Message!
+  createMessage(content: String, randomId: String, pictures: [Int!] = []): Message!
+  deleteMessage(messageId: Int!): Message!
+  signIn(email: String!, password: String!): Token!
+  signUp(email: String!, username: String, password: String!): User!
+  OAuthDiscord(code: String!): Token!
+  confirmEmail(token: String!): Token!
+  requestEmailConfirmation: User!
+  requestPasswordReset(email: String!): Boolean!
+  resetPassword(token: String!, password: String!): Token!
+  updateUsername(username: String!): User!
+  invalidateCurrentToken: Boolean!
+  invalidateTokenById(id: Int!): Boolean!
+  invalidateAllTokens: Boolean!
+  createPoll(question: String!, isAnonymous: Boolean, allowMultiple: Boolean, allowChangeVote: Boolean, endsAt: DateTime, options: [String!]!): Message!
+  updatePoll(question: String!, allowMultiple: Boolean, allowChangeVote: Boolean, endsAt: DateTime, messageId: Int!, options: [UpdatePollOptionInput!]!): Message!
+  votePoll(messageId: Int!, optionIds: [Int!]!): Poll!
+  cancelPollVote(messageId: Int!): Poll!
+  closePoll(messageId: Int!): Poll!
 }
 type Picture {
   id: Int!
@@ -63,23 +70,57 @@ type PictureRepresentation {
   path: String!
   link: String!
 }
-type Message {
+type Poll {
+  isAnonymous: Boolean!
+  closedAt: DateTime
+  voters: [PollVoter!]!
+  messageId: Int!
+  question: String!
+  allowMultiple: Boolean!
+  allowChangeVote: Boolean!
+  endsAt: DateTime
+  isClosed: Boolean!
+  serverTime: DateTime!
+  selectedOptionIds: [Int!]!
+  options: [PollOption!]!
+  selectedOption: Int
+  totalVotes: Int
+}
+type PollOption {
   id: Int!
-  ownerId: Float
-  randomId: String
-  system: Boolean!
-  content: String!
-  username: String
-  deletedById: Float
-  schema: String!
-  json: String
-  type: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-  owner: User
-  pictures: [Picture!]!
-  deletedBy: User
+  label: String!
+  votes: Int
+}
+enum PunishmentTypes {
+  ban
+  mute
+}
+type Query {
+  getCurrentUser: User!
+  getUserById(id: Int!): User!
+  getOnline: [User!]!
+  searchUsers(query: String!): [User!]!
+  getMessages(count: Int = 100, page: Int = 1, lastId: Int, fromDateTime: String, reverse: Boolean = false, poll: Boolean = false): [Message!]!
+  isUsernameFree(username: String!): Boolean!
+  getTokenByDiscordId(id: String!): Token
+  getTokens: [Token!]!
+  getPoll(messageId: Int!): Poll!
+  getGrants: String!
+  getHello: String!
+  version: String!
+  getPictureById(pictureId: Int!): Picture!
+}
+type Role {
+  id: Int!
+  name: String!
+}
+type Subscription {
+  onlineUpdated: [User!]!
+  userUpdated: User!
+  messageCreated: Message!
+  messageDeleted: Message!
+  messageUpdated: Message!
+  userRegisteredViaDiscord: String!
 }
 type Token {
   id: Int!
@@ -89,35 +130,33 @@ type Token {
   expiresAt: DateTime
   usedAt: DateTime
 }
-type Mutation {
-  updateOnlineStatus: Boolean!
-  updateAvatar(pictureId: Int!): User!
-  punish(userId: Int!, type: PunishmentTypes!, reason: String!, duration: Int): User!
-  unpunish(userId: Int!): User!
-  updateMessage(messageId: Int!, content: String): Message!
-  createMessage(content: String, randomId: String, pictures: [Int!] = []): Message!
-  deleteMessage(messageId: Int!): Message!
-  signIn(email: String!, password: String!): Token!
-  signUp(email: String!, username: String, password: String!): User!
-  OAuthDiscord(code: String!): Token!
-  confirmEmail(token: String!): Token!
-  requestEmailConfirmation: User!
-  requestPasswordReset(email: String!): Boolean!
-  resetPassword(token: String!, password: String!): Token!
-  updateUsername(username: String!): User!
-  invalidateCurrentToken: Boolean!
-  invalidateTokenById(id: Int!): Boolean!
-  invalidateAllTokens: Boolean!
+input UpdatePollOptionInput {
+  id: Int
+  label: String!
 }
-enum PunishmentTypes {
-  ban
-  mute
+type User {
+  id: Int!
+  username: String
+  avatarId: String
+  state: UserState!
+  wasOnlineAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  roles: [Role!]!
+  avatar: Picture
+  emailConfirmed: Boolean
+  muted: Boolean
+  email: String
 }
-type Subscription {
-  onlineUpdated: [User!]!
-  userUpdated: User!
-  messageCreated: Message!
-  messageDeleted: Message!
-  messageUpdated: Message!
-  userRegisteredViaDiscord: String!
+enum UserState {
+  ONLINE
+  IDLE
+  OFFLINE
+}
+type PollVoter {
+  id: Int!
+  username: String!
+  avatarUrl: String
+  votedAt: DateTime
+  optionIds: [Int!]!
 }

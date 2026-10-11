@@ -1,0 +1,6 @@
+#import "../fragments/poll-parts.graphql"
+query GetPoll($messageId: Int!) {
+  getPoll(messageId: $messageId) {
+    ...PollParts
+  }
+}

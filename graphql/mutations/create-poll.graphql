@@ -1,0 +1,20 @@
+#import "../fragments/message-parts.graphql"
+mutation CreatePoll(
+  $isAnonymous: Boolean
+  $question: String!
+  $options: [String!]!
+  $allowMultiple: Boolean
+  $allowChangeVote: Boolean
+  $endsAt: DateTime
+) {
+  createPoll(
+    isAnonymous: $isAnonymous
+    question: $question
+    options: $options
+    allowMultiple: $allowMultiple
+    allowChangeVote: $allowChangeVote
+    endsAt: $endsAt
+  ) {
+    ...MessageParts
+  }
+}

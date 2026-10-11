@@ -1,0 +1,100 @@
+.message-poll
+	vertical-spacing(8px)
+	box-sizing border-box
+	width 480px
+	max-width 100%
+	margin-top 8px
+	padding 16px
+	color var(--primary-text)
+	background var(--secondary-background)
+	border 1px solid var(--input-border)
+	border-radius 5px
+
+	&__header,
+	&__caption
+		display flex
+		align-items center
+		flex-wrap wrap
+		color var(--secondary-text)
+		font-size 12px
+		font-weight 500
+		horizontal-spacing(8px)
+
+	&__icon
+		display inline-flex
+		width 18px
+		height 18px
+		fill currentColor
+
+	&__menu
+		flex-shrink 0
+		margin -6px -6px -6px auto
+
+	&__question
+		margin 0
+		color inherit
+		font-size 16px
+		font-weight 600
+		line-height 1.4
+		word-wrap break-word
+		overflow-wrap break-word
+
+	&__content,
+	&__footer
+		vertical-spacing(6px)
+
+	&__footer:not(:first-child)
+		margin-top 12px
+		padding-top 12px
+		border-top 1px solid var(--input-border)
+
+	&__actions
+		display flex
+		flex-wrap wrap
+		horizontal-spacing(8px)
+
+	&__hint,
+	&__error
+		margin 0
+		color var(--secondary-text)
+		font-size 13px
+		font-weight 400
+		line-height 1.4
+		word-wrap break-word
+		overflow-wrap break-word
+
+	&__error
+		color var(--error)
+
+	&__retry
+		padding 0
+		color inherit
+		font inherit
+		text-decoration underline
+		cursor pointer
+		background transparent
+		border none
+
+.poll-summary
+	display flex
+	align-items center
+	flex-wrap wrap
+	color var(--secondary-text)
+	font-size 13px
+	font-weight 400
+	line-height 1.4
+	horizontal-spacing(8px)
+
+	&__participants,
+	&__details
+		display inline-flex
+		align-items baseline
+		horizontal-spacing(4px)
+
+	&__details
+		horizontal-spacing(8px)
+
+	&__count
+		color var(--primary-text)
+		font-weight 600
+		font-feature-settings 'tnum'

@@ -1,0 +1,55 @@
+.poll-multiple-choice
+	vertical-spacing(6px)
+
+	&__choice.checkbox
+		width 100%
+		padding 8px
+		color var(--primary-text)
+		font-size 14px
+		background var(--input-background)
+		border 1px solid var(--input-border)
+		border-radius 5px
+
+		&:hover:not(.poll-multiple-choice__choice_state_disabled)
+			background var(--background-hover)
+
+		&.poll-multiple-choice__choice_state_disabled
+			opacity .5
+
+		&.poll-multiple-choice__choice_state_selected
+			border-color var(--primary)
+
+		.checkbox__input
+			position absolute
+			visibility visible
+			width 20px
+			height 20px
+			margin 0
+			opacity 0
+
+			&:focus + .checkbox__label:before
+				outline 2px solid var(--primary)
+				outline-offset 2px
+
+		.checkbox__label
+			position relative
+			display block
+			min-height 20px
+			padding-left 30px
+			line-height 1.4
+			word-wrap break-word
+			overflow-wrap break-word
+
+		.checkbox__label:before
+			top 0
+			left 0
+			width 20px
+			height 20px
+			transform none
+
+		.checkbox__input:checked + .checkbox__label:after
+			top 10px
+			left 10px
+			width 12px
+			height 7px
+			transform translate(-50%, -65%) rotate(-45deg)

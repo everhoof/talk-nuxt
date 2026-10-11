@@ -8,7 +8,7 @@
       </div>
     </transition>
     <transition name="fade">
-      <div v-show="!loading" class="chat__messages">
+      <div v-show="!loading" ref="messageList" class="chat__messages">
         <template v-if="fetchMore === 'older'">
           <div class="chat__messages-loader">
             <img class="icon" src="~/assets/icons/spinner.svg" alt="" />
@@ -46,12 +46,22 @@ import BMessageDonation from '~/components/message-donation/message-donation.vue
 import { Message } from '~/types/message';
 import type { FetchDirection } from '~/store/messages';
 
+declare const ResizeObserver: new (callback: () => void) => {
+  observe(target: Element): void;
+  disconnect(): void;
+};
+
 @Component({
   name: 'b-chat',
   components: { BMessageDonation, BMessagesSeparator, BMessage, BUploadFile },
 })
 export default class Chat extends Vue {
   @Ref('scroll') scroll?: HTMLDivElement;
+  @Ref() messageList!: HTMLDivElement;
+
+  resizeObserver: InstanceType<typeof ResizeObserver> | null = null;
+  messageListHeight = 0;
+  stickToBottom = true;
 
   loading = true;
   fetchMore: FetchDirection = 'none';
@@ -109,6 +119,11 @@ export default class Chat extends Vue {
 
     await this.$nextTick();
     window.setTimeout(this.scrollDownChat, 50);
+    this.resizeObserver = new ResizeObserver(() => {
+      this.messageListHeight = this.messageList.offsetHeight;
+      if (this.stickToBottom) this.scrollDownChat();
+    });
+    this.resizeObserver.observe(this.messageList);
 
     if (this.$accessor.settings.isPlay) {
       const datetime = DateTime.fromISO(this.$route.query.from?.toString() ?? '');
@@ -129,7 +144,6 @@ export default class Chat extends Vue {
       }
     }
 
-    this.$nuxt.$on('force-scroll', this.forceScroll);
     this.$nuxt.$on('force-scroll', this.forceScroll);
     this.$nuxt.$on('start-message-edit', this.onMessagesChange);
   }
@@ -167,6 +181,7 @@ export default class Chat extends Vue {
   }
 
   beforeDestroy(): void {
+    this.resizeObserver?.disconnect();
     this.$nuxt.$off('force-scroll', this.forceScroll);
     this.$nuxt.$off('start-message-edit', this.onMessagesChange);
   }
@@ -187,11 +202,13 @@ export default class Chat extends Vue {
         this.scrollDownChat();
       }
     } else {
+      await this.$nextTick();
       this.scrollDownChat();
     }
   }
 
   scrollDownChat(): void {
+    this.stickToBottom = true;
     if (this.scroll) {
       this.scroll.scrollTop = this.scroll.scrollHeight;
     }
@@ -206,6 +223,10 @@ export default class Chat extends Vue {
 
     const offsetTop = target.scrollTop;
     const offsetBottom = target.scrollHeight - target.clientHeight - target.scrollTop;
+    // A card can grow before ResizeObserver runs; that scroll event is not a user scrolling up.
+    if (this.messageList.offsetHeight === this.messageListHeight) {
+      this.stickToBottom = offsetBottom < 200;
+    }
 
     if (offsetTop < 100) {
       this.fetchMore = 'older';

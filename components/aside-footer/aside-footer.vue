@@ -2,14 +2,7 @@
   <!-- begin .aside-footer-->
   <div class="aside-footer">
     <div class="aside-footer__profile" @click.stop="dropdown = !dropdown">
-      <img v-if="avatar" :src="avatar" class="aside-footer__avatar" />
-      <div
-        v-else
-        class="aside-footer__avatar aside-footer__avatar_type_default"
-        :style="{ backgroundColor: avatarColor }"
-      >
-        {{ username[0] }}
-      </div>
+      <b-user-avatar class="aside-footer__avatar" :username="username" :user-id="userId" :src="avatar" />
       <div class="aside-footer__info">
         <h3 class="aside-footer__username">{{ username }}</h3>
       </div>
@@ -33,16 +26,17 @@
 
 <script lang="ts">
 import { Component, Vue, Ref } from 'nuxt-property-decorator';
-import { getUserColor } from '~/tools/util';
 import { AuthState } from '~/store/auth';
 import BButton from '~/components/button/button.vue';
+import BUserAvatar from '~/components/user-avatar/user-avatar.vue';
 
 @Component({
   name: 'b-aside-footer',
-  components: { BButton },
+  components: { BButton, BUserAvatar },
 })
 export default class AsideFooter extends Vue {
   @Ref('dropdown') dropdownEl!: HTMLUListElement;
+
   dropdown: boolean = false;
 
   mounted() {
@@ -67,10 +61,6 @@ export default class AsideFooter extends Vue {
 
   get avatar(): string {
     return this.$accessor.auth.user?.avatar?.s.link || '';
-  }
-
-  get avatarColor() {
-    return getUserColor(this.user?.id || 0);
   }
 
   logout() {

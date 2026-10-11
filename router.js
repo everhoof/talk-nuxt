@@ -15,6 +15,7 @@ import RequestEmailConfirmationModal from '~/components/modals/request-email-con
 import EmailConfirmedModal from '~/components/modals/email-confirmed-modal/email-confirmed-modal.vue';
 import PunishmentModal from '~/components/modals/punishment-modal/punishment-modal.vue';
 import SettingsModal from '~/components/modals/settings-modal/settings-modal.vue';
+import PollModal from '~/components/modals/poll-modal/poll-modal.vue';
 
 Vue.use(Router);
 
@@ -27,6 +28,8 @@ export function createRouter() {
         name: 'main',
         component: MainPage,
         children: [
+          { path: 'poll', name: 'modal_poll', component: PollModal },
+          { path: 'poll/:id/edit', name: 'modal_poll_edit', component: PollModal },
           { path: 'login', name: 'modal_login', component: LoginModal },
           { path: 'register', name: 'modal_register', component: RegisterModal },
           { path: 'profile/:id', name: 'modal_profile', component: ProfileModal },

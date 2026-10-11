@@ -1,0 +1,90 @@
+.poll-voters
+	width 440px
+	max-width 100%
+
+	&__body
+		vertical-spacing(20px)
+		overflow-y auto
+		max-height 65vh
+		padding-right 8px
+
+	&__question
+		margin 0
+		color inherit
+		font-size 16px
+		line-height 1.4
+		word-wrap break-word
+		overflow-wrap break-word
+
+	&__summary
+		vertical-spacing(8px)
+
+	&__hint
+		margin 0
+		color var(--secondary-text)
+		font-size 13px
+		line-height 1.4
+
+.poll-voters-group
+	vertical-spacing(12px)
+	padding-top 16px
+	border-top 1px solid var(--input-border)
+
+	&__heading
+		display flex
+		justify-content space-between
+		align-items baseline
+		margin 0
+		color inherit
+		font-size 14px
+		line-height 1.4
+		horizontal-spacing(12px)
+
+		> span:first-child
+			min-width 0
+			word-wrap break-word
+			overflow-wrap break-word
+
+	&__count
+		flex-shrink 0
+		min-width 2ch
+		color var(--primary-text)
+		font-size 16px
+		font-weight 600
+		text-align right
+		font-feature-settings 'tnum'
+
+	&__list
+		vertical-spacing(8px)
+		margin 0
+		padding 0
+		list-style none
+
+.poll-voter
+	display flex
+	align-items center
+	horizontal-spacing(10px)
+
+	&__details
+		vertical-spacing(4px)
+		min-width 0
+
+	&__identity
+		display flex
+		align-items baseline
+		horizontal-spacing(8px)
+
+	&__name
+		min-width 0
+		font-size 14px
+		word-wrap break-word
+		overflow-wrap break-word
+
+	&__marker,
+	&__time
+		flex-shrink 0
+		color var(--secondary-text)
+		font-size 12px
+
+	&__time
+		font-feature-settings 'tnum'
