@@ -1,24 +1,19 @@
 .messages-separator
-	position relative
-	display block
-	padding 8px 0
+	display flex
+	align-items center
+	padding 8px 16px
 	text-align center
 
-	&:before
+	&:before,
+	&:after
 		content ''
-		position absolute
-		top 50%
-		right 16px
-		left 16px
-		display block
+		flex 1
 		border-bottom 1px solid var(--background-secondary)
 
 	&__date
-		position relative
-		z-index 1
 		display inline-block
+		flex-shrink 0
 		padding 0 8px
 		color var(--text-secondary)
 		font-size 12px
 		font-weight 600
-		background var(--background-primary)
