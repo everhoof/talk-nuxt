@@ -1,0 +1,141 @@
+.nightmare-night
+	position absolute
+	top 0
+	left 0
+	z-index -1
+	display block
+	overflow hidden
+	width 100%
+	height 36px
+	user-select none
+	pointer-events none
+	--lantern-paper #ddbc83
+	--lantern-ink #292535
+	--lantern-cord #8d879c
+	--lantern-moon #c9ab79
+
+	.page_theme_light &
+		--lantern-paper #a47b49
+		--lantern-ink #f4f1eb
+		--lantern-cord #7d748c
+		--lantern-moon #9c7c58
+
+	&__garland
+		display block
+		width 100%
+		height 36px
+
+	&__cord
+		stroke var(--lantern-cord)
+		opacity .18
+		stroke-width .7
+
+	&__lantern
+		transform-origin 180px 11px
+		animation nightmare-night-sway 11s ease-in-out infinite
+
+		&_place_alternate
+			animation-duration 13s
+			animation-delay -5s
+
+		&_kind_pumpkin
+			--lantern-paper #df9858
+
+			.page_theme_light &
+				--lantern-paper #bf753c
+
+		&_kind_crescent
+			--lantern-paper #dfb76a
+
+			.page_theme_light &
+				--lantern-paper #aa8144
+
+		&_kind_ribbed
+			--lantern-paper #c98a66
+
+			.page_theme_light &
+				--lantern-paper #a56c4b
+
+	&__paper
+		fill var(--lantern-paper)
+		opacity .6
+
+	&__cutout
+		fill var(--lantern-ink)
+
+	&__detail
+		stroke var(--lantern-ink)
+		stroke-width .6
+		stroke-linecap round
+
+		&_type_ribs
+			opacity .4
+
+	&__moon,
+	&__star
+		fill var(--lantern-moon)
+		opacity .24
+
+.page_theme_nightmare-night
+	.page__wrapper
+		position relative
+
+	.chat
+		background transparent
+
+	.page__aside
+		background var(--background-secondary)
+		isolation isolate
+
+		&:before
+			content ''
+			position absolute
+			top 0
+			right 0
+			left 0
+			bottom 52px
+			z-index -1
+			pointer-events none
+			background url('/nightmare-night/sidebar-bats-muted.svg') center / 100% 100% no-repeat
+			opacity .22
+
+	.aside-panel
+		background transparent
+
+	.page__chat
+		isolation isolate
+
+		&:before
+			content ''
+			position absolute
+			z-index -2
+			pointer-events none
+			background url('/nightmare-night/corner-web.svg') right top / 180px 180px no-repeat
+			opacity .165
+			inset 0
+
+	&.page_theme_light .page__chat:before
+		opacity .1875
+
+	&.page_theme_light .page__aside:before
+		opacity .24
+
+	+below(size-s)
+		.page__chat:before
+			background-size 108px 108px
+			opacity .12
+
+		&.page_theme_light .page__chat:before
+			opacity .15
+
+@keyframes nightmare-night-sway
+	0%,
+	100%
+		transform rotate(-2deg)
+
+	50%
+		transform rotate(2deg)
+
+@media (prefers-reduced-motion reduce)
+	.nightmare-night__lantern
+		animation none

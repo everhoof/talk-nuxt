@@ -14,7 +14,6 @@
     <client-only>
       <vue-snotify />
     </client-only>
-    <div class="page__header" />
     <div
       class="page__main"
       :class="{
@@ -82,6 +81,9 @@ import { getFaviconHref, preloadFavicons } from '~/tools/favicon';
       classes.push('page_theme_dark');
     } else {
       classes.push('page_theme_' + this.$accessor.settings.theme);
+      if (this.$accessor.settings.nightmareNight) {
+        classes.push('page_theme_nightmare-night');
+      }
       if (this.$accessor.settings.compact) {
         classes.push('page_style_compact');
       }

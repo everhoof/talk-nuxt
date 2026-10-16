@@ -1,7 +1,19 @@
 <template>
   <!-- begin .messages-separator-->
   <div class="messages-separator">
-    <span class="messages-separator__date">{{ date }}</span>
+    <span class="messages-separator__date">
+      <img
+        v-if="$accessor.settings.nightmareNight && !$accessor.settings.isOBS"
+        class="messages-separator__pumpkin"
+        src="/nightmare-night/pumpkin.svg"
+        width="16"
+        height="16"
+        alt=""
+        draggable="false"
+        aria-hidden="true"
+      />
+      {{ date }}
+    </span>
   </div>
   <!-- end .messages-separator-->
 </template>

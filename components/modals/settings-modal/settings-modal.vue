@@ -9,6 +9,9 @@
         <b-switch id="settings_compact" :checked="compact" @update:checked="setCompact">
           {{ $t('modals.settings.compact_view') }}
         </b-switch>
+        <b-switch id="settings_nightmare_night" :checked="nightmareNight" @update:checked="setNightmareNight">
+          {{ $t('modals.settings.nightmare_night') }}
+        </b-switch>
         <b-switch v-if="false" id="settings_snow" :checked="snow" @update:checked="setSnow">
           {{ $t('modals.settings.snow') }}
         </b-switch>
@@ -58,6 +61,14 @@ export default class SettingsModal extends Vue {
 
   get snow(): boolean {
     return this.$accessor.settings.snow;
+  }
+
+  get nightmareNight(): boolean {
+    return this.$accessor.settings.nightmareNight;
+  }
+
+  setNightmareNight(value: boolean) {
+    this.$accessor.settings.setNightmareNight(value);
   }
 
   setTheme(value: boolean) {

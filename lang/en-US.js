@@ -83,6 +83,7 @@ export default {
       dark_theme: 'Dark theme',
       compact_view: 'Compact view',
       snow: 'Snow',
+      nightmare_night: 'Nightmare Night decorations',
       message_sound: 'Message Sound',
       message_sound_options: {
         none: 'None',

@@ -83,6 +83,7 @@ export default {
       dark_theme: 'Тёмная тема',
       compact_view: 'Компактный вид',
       snow: 'Снег',
+      nightmare_night: 'Украшения Ночи кошмаров',
       message_sound: 'Звук сообщения',
       message_sound_options: {
         none: 'Нет',

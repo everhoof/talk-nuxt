@@ -10,6 +10,7 @@ export const state = () => ({
   theme: 'dark' as string,
   compact: true as boolean,
   snow: false as boolean,
+  nightmareNight: true as boolean,
   messageSound: 'none' as string,
   warning: true as boolean,
   timeZone: 'Europe/Moscow' as string,
@@ -23,6 +24,7 @@ export const mutations = mutationTree(state, {
   SET_THEME: (_state, payload: string) => (_state.theme = payload),
   SET_COMPACT: (_state, payload: boolean) => (_state.compact = payload),
   SET_SNOW: (_state, payload: boolean) => (_state.snow = payload),
+  SET_NIGHTMARE_NIGHT: (_state, payload: boolean) => (_state.nightmareNight = payload),
   SET_MESSAGE_SOUND: (_state, payload: string) => (_state.messageSound = payload),
   SET_TIMEZONE: (_state, payload: string) => (_state.timeZone = payload),
   SET_WARNING: (_state, payload: boolean) => (_state.warning = payload),
@@ -46,12 +48,16 @@ export const actions = actionTree(
       const theme = context.app.$cookies.get('settings_theme');
       const compact = context.app.$cookies.get('settings_compact');
       // const snow = context.app.$cookies.get('settings_snow');
+      const nightmareNight = context.app.$cookies.get('settings_nightmare_night');
       const messageSound = context.app.$cookies.get('settings_message_sound');
       const warning = context.app.$cookies.get('settings_warning');
 
       if (theme) dispatch('setTheme', theme);
       if (compact !== null && compact !== undefined) dispatch('setCompact', compact);
       // if (snow !== null && snow !== undefined) dispatch('setSnow', snow);
+      if (nightmareNight !== null && nightmareNight !== undefined) {
+        commit('SET_NIGHTMARE_NIGHT', nightmareNight === true || nightmareNight === 'true');
+      }
       if (messageSound) commit('SET_MESSAGE_SOUND', messageSound);
       if (warning !== null && warning !== undefined) commit('SET_WARNING', warning === 'true');
     },
@@ -89,6 +95,15 @@ export const actions = actionTree(
         maxAge: 86400 * 3650,
       });
       commit('SET_SNOW', payload);
+    },
+
+    setNightmareNight({ commit }, payload: boolean) {
+      this.app.$cookies.set('settings_nightmare_night', payload, {
+        path: '/',
+        sameSite: 'lax',
+        maxAge: 86400 * 30,
+      });
+      commit('SET_NIGHTMARE_NIGHT', payload);
     },
 
     setMessageSound({ commit }, payload: string) {

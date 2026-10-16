@@ -86,6 +86,23 @@
 		&:hover
 			filter grayscale(0)
 
+		.page_theme_nightmare-night &
+			position relative
+			background-image none
+			opacity .85
+			filter none
+
+			&:before
+				content ''
+				position absolute
+				pointer-events none
+				background url('/nightmare-night/emoji-pumpkin.svg') center / 24px 24px no-repeat
+				inset 0
+
+			&:hover,
+			&.footer__actions-button_type_active
+				opacity 1
+
 	&__attach-button
 		transform rotate(225deg)
 

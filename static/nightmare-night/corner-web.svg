@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180" fill="none">
+  <desc>A silvery corner cobweb with a small violet spider hanging from its silk.</desc>
+  <defs>
+    <linearGradient id="nightmare-web-sheen" x1="0" y1="0" x2="-150" y2="150" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#c1cfe5"/>
+      <stop offset=".55" stop-color="#a0b5d5"/>
+      <stop offset="1" stop-color="#9289b7"/>
+    </linearGradient>
+    <g id="nightmare-cobweb" stroke="url(#nightmare-web-sheen)" stroke-width="1.6" stroke-linecap="round">
+      <path d="M0 0L-166.30 68.88"/>
+      <path d="M0 0L-127.28 127.28"/>
+      <path d="M0 0L-68.88 166.30"/>
+      <path d="M0 0L-0.00 180.00"/>
+      <path d="M-42 0Q-32.95 6.56 -38.80 16.07Q-27.94 18.67 -29.70 29.70Q-18.67 27.94 -16.07 38.80Q-6.56 32.95 -0.00 42.00"/>
+      <path d="M-84 0Q-65.91 13.11 -77.61 32.15Q-55.87 37.33 -59.40 59.40Q-37.33 55.87 -32.15 77.61Q-13.11 65.91 -0.00 84.00"/>
+      <path d="M-126 0Q-98.86 19.67 -116.41 48.22Q-83.81 56.00 -89.10 89.10Q-56.00 83.81 -48.22 116.41Q-19.67 98.86 -0.00 126.00"/>
+      <path d="M-168 0Q-131.82 26.22 -155.21 64.29Q-111.75 74.67 -118.79 118.79Q-74.67 111.75 -64.29 155.21Q-26.22 131.82 -0.00 168.00"/>
+    </g>
+  </defs>
+  <use href="#nightmare-cobweb" transform="translate(180 0)"/>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M121 59V112" stroke="#b9c6e0" stroke-width="1.4"/>
+    <g transform="translate(121 123)">
+      <path d="M-5-6L-15-14-19-9M-7-2L-20-5-24 1M-7 3L-20 7-22 14M-5 6L-14 17-13 23M5-6L15-14 19-9M7-2L20-5 24 1M7 3L20 7 22 14M5 6L14 17 13 23" stroke="#a995d1" stroke-width="2.4"/>
+      <ellipse cy="-3" rx="8" ry="11" fill="#9180b7" stroke="#c5b5e5" stroke-width="1.2"/>
+      <circle cy="8" r="6" fill="#a293c5"/>
+      <path d="M-2 9V11M2 9V11" stroke="#e0d8f2" stroke-width="1.8"/>
+    </g>
+  </g>
+</svg>

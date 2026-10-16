@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <desc>Original round pumpkin emoji icon with a toothy grin.</desc>
+  <defs>
+    <linearGradient id="emoji-pumpkin-colour" x1="7" y1="4" x2="16" y2="23" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#edb46c"/>
+      <stop offset="1" stop-color="#c3814d"/>
+    </linearGradient>
+  </defs>
+  <path d="M11 4Q10 1.5 13 1L14 2.5Q12 2.5 12.5 4.5" fill="#a6a178"/>
+  <circle cx="12" cy="13" r="9.5" fill="url(#emoji-pumpkin-colour)" stroke="#e3a25e" stroke-width=".8"/>
+  <path d="M9 4.5C5.5 8 5.5 18 9 21.5M15 4.5C18.5 8 18.5 18 15 21.5" stroke="#9d654b" stroke-width=".7" opacity=".5"/>
+  <path d="M6 11L9 7.5 10 11.5ZM14 11.5L15 7.5 18 11Z" fill="#4c3941"/>
+  <path d="M5.5 14L8.5 15 10 13.5 11 16H13L14 13.5 15.5 15 18.5 14Q17 20 12 20Q7 20 5.5 14Z" fill="#4c3941"/>
+  <path d="M5.5 7.5Q4.5 9 4.5 10.5" stroke="#ffe0a0" stroke-linecap="round" opacity=".6"/>
+</svg>

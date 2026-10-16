@@ -1,5 +1,6 @@
 <template>
   <div class="page__chat">
+    <b-nightmare-night v-if="$accessor.settings.nightmareNight && !$accessor.settings.isOBS" />
     <div v-if="false" class="page__warning">
       <b-warning />
     </div>
@@ -24,9 +25,10 @@ import BReminder from '~/components/reminder/reminder.vue';
 import { ReminderTypes } from '~/types/reminderTypes';
 import RequestEmailConfirmation from '~/graphql/mutations/request-email-confirmation.graphql';
 import BWarning from '~/components/warning/warning.vue';
+import BNightmareNight from '~/components/nightmare-night/nightmare-night.vue';
 
 @Component({
-  components: { BWarning, BReminder, BFooter, BChat },
+  components: { BNightmareNight, BWarning, BReminder, BFooter, BChat },
 })
 export default class MainPage extends Vue {
   remind: boolean = false;

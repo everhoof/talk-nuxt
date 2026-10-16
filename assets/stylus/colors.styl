@@ -21,9 +21,16 @@
 	--green_500 #645fac
 	--green_600 #423e92
 
+	--orange_300 #f0ae62
+	--orange_400 #e89b48
+	--orange_500 #d88a36
+	--orange_600 #b9691c
+	--orange_700 #a15a14
+
 	--text-error #C0392B
 	--text-on-primary-background var(--text-primary)
 	--text-control-hover var(--text-primary)
+	--text-separator var(--text-secondary)
 	--text-menu-hover var(--gray_20)
 
 	--background-control-hover var(--background-hover)
@@ -31,6 +38,8 @@
 	--background-menu-hover var(--primary-dark)
 
 	--border-control-hover var(--primary)
+	--border-poll var(--border-input)
+	--border-poll-width 1px
 
 	--focus-ring var(--primary)
 	--icon-checkmark #ffffff
@@ -87,3 +96,33 @@
 			--scrollbar-track #1a1a1a
 
 			--shadow rgba(0, 0, 0, .14)
+
+		&_nightmare-night
+			--primary var(--orange_400)
+			--primary-light var(--orange_300)
+			--primary-dark var(--orange_500)
+
+			--text-accent var(--primary)
+			--text-on-primary-background #34273a
+			--text-control-hover var(--primary)
+			--text-separator var(--primary)
+			--text-menu-hover var(--primary)
+
+			--background-control-hover rgba(232, 155, 72, .12)
+			--background-selection rgba(232, 155, 72, .08)
+			--background-menu-hover var(--background-control-hover)
+
+			--border-poll var(--primary)
+			--border-poll-width 3px
+
+			--icon-checkmark var(--text-on-primary-background)
+
+			&.page_theme_light
+				--primary var(--orange_600)
+				--primary-light var(--orange_500)
+				--primary-dark var(--orange_700)
+
+				--text-on-primary-background #fffaf2
+
+				--background-control-hover rgba(185, 105, 28, .1)
+				--background-selection rgba(185, 105, 28, .07)
