@@ -5,9 +5,9 @@
 	max-width 100%
 	margin-top 8px
 	padding 16px
-	color var(--primary-text)
-	background var(--secondary-background)
-	border 1px solid var(--input-border)
+	color var(--text-primary)
+	background var(--background-secondary)
+	border 1px solid var(--border-input)
 	border-radius 5px
 
 	&__header,
@@ -15,7 +15,7 @@
 		display flex
 		align-items center
 		flex-wrap wrap
-		color var(--secondary-text)
+		color var(--text-secondary)
 		font-size 12px
 		font-weight 500
 		horizontal-spacing(8px)
@@ -46,7 +46,7 @@
 	&__footer:not(:first-child)
 		margin-top 12px
 		padding-top 12px
-		border-top 1px solid var(--input-border)
+		border-top 1px solid var(--border-input)
 
 	&__actions
 		display flex
@@ -56,7 +56,7 @@
 	&__hint,
 	&__error
 		margin 0
-		color var(--secondary-text)
+		color var(--text-secondary)
 		font-size 13px
 		font-weight 400
 		line-height 1.4
@@ -64,7 +64,7 @@
 		overflow-wrap break-word
 
 	&__error
-		color var(--error)
+		color var(--text-error)
 
 	&__retry
 		padding 0
@@ -79,7 +79,7 @@
 	display flex
 	align-items center
 	flex-wrap wrap
-	color var(--secondary-text)
+	color var(--text-secondary)
 	font-size 13px
 	font-weight 400
 	line-height 1.4
@@ -95,6 +95,6 @@
 		horizontal-spacing(8px)
 
 	&__count
-		color var(--primary-text)
+		color var(--text-primary)
 		font-weight 600
 		font-feature-settings 'tnum'

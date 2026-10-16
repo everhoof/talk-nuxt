@@ -29,23 +29,23 @@ export default class Tooltip extends Vue {
 
 <style lang="stylus" scoped>
 .tooltip-light
-  --tooltip-light__background: var(--secondary-background);
-  --tooltip-light__border-color: var(--primary-background);
-  --tooltip-light__color: var(--primary-color);
+  --background-tooltip: var(--background-secondary);
+  --border-tooltip: var(--background-primary);
+  --text-tooltip: var(--primary-color);
 
   position: relative;
   z-index: 1;
   display: inline-block;
   padding: .3125rem .625rem;
-  color: var(--tooltip-light__color);
+  color: var(--text-tooltip);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.3;
   text-align: center;
   cursor: default;
   user-select: none;
-  background: var(--tooltip-light__background);
-  border: 1px solid var(--tooltip-light__border-color);
+  background: var(--background-tooltip);
+  border: 1px solid var(--border-tooltip);
   border-radius: .3125rem;
 
   &::after
@@ -53,8 +53,8 @@ export default class Tooltip extends Vue {
     position: absolute;
     width: .5rem;
     height: .5rem;
-    background: var(--tooltip-light__background);
-    border: 1px solid var(--tooltip-light__border-color);
+    background: var(--background-tooltip);
+    border: 1px solid var(--border-tooltip);
     border-top: none;
     border-right: none;
 

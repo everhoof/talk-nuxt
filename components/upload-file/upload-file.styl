@@ -11,7 +11,7 @@
 	&__wrapper
 		width 300px
 		margin auto
-		background-color var(--secondary-background)
+		background-color var(--background-secondary)
 		border-radius 4px
 
 	&__section
@@ -23,20 +23,20 @@
 		padding 20px
 		color var(--gray_600)
 		cursor pointer
-		border 2px dashed var(--primary-background)
+		border 2px dashed var(--background-primary)
 		defaultTransition()
 
 		&_type_hovered,
 		&:hover
-			color var(--accent-text)
-			border-color var(--accent-background)
+			color var(--text-accent)
+			border-color var(--background-accent)
 
 			& ^[0]__icon
-				fill var(--accent-background)
+				fill var(--background-accent)
 
 	&__icon
 		width 90px
 		height 90px
 		margin-bottom 10px
-		fill var(--primary-background)
+		fill var(--background-primary)
 		defaultTransition()

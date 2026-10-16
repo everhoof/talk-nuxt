@@ -146,9 +146,9 @@ export default class MentionList extends Vue {
   position: relative;
   overflow: hidden;
   padding: 7px;
-  color: var(--primary-text);
+  color: var(--text-primary);
   font-size: 14px;
-  background: var(--secondary-background);
+  background: var(--background-secondary);
   border-radius: 10px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, .05), 0 10px 20px rgba(0, 0, 0, .1);
 
@@ -156,7 +156,7 @@ export default class MentionList extends Vue {
     display: flex;
     align-items: center;
     padding: 3px 11px;
-    color: var(--primary-text);
+    color: var(--text-primary);
 
   &__message-icon
     margin: 0 8px 0 0;
@@ -176,5 +176,5 @@ export default class MentionList extends Vue {
     border-radius: 5px;
 
     &_is-selected
-      background: var(--primary-background);
+      background: var(--background-primary);
 </style>

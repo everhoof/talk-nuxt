@@ -1,5 +1,4 @@
 .page
-	--error #C0392B
 	--gray_20 #FAFAFA
 	--gray_40 #F4F4F4
 	--gray_50 #F0F0F0
@@ -14,6 +13,7 @@
 	--gray_850 #202020
 	--gray_900 #1A1A1A
 	--gray_950 #0A0A0A
+
 	--green_100 #9591dd
 	--green_200 #8883d2
 	--green_300 #817bc8
@@ -21,45 +21,57 @@
 	--green_500 #645fac
 	--green_600 #423e92
 
+	--text-error #C0392B
+
 	&_theme
 		&_light
 			--primary var(--green_300)
 			--primary-dark var(--green_500)
 			--primary-light var(--green_200)
-			--primary-text var(--gray_950)
-			--secondary-text var(--gray_700)
-			--accent-text var(--green_300)
-			--contrast-text var(--gray_100)
-			--primary-background var(--gray_20)
-			--secondary-background var(--gray_100)
-			--accent-background var(--green_600)
-			--contrast-background var(--gray_950)
-			--input-background var(--gray_50)
-			--input-border var(--gray_50)
-			--scrollbar-thumb var(--gray_100)
-			--scrollbar-track var(--gray_50)
+
+			--text-primary var(--gray_950)
+			--text-secondary var(--gray_700)
+			--text-accent var(--green_300)
+			--text-contrast var(--gray_100)
+
+			--background-primary var(--gray_20)
+			--background-secondary var(--gray_100)
+			--background-accent var(--green_600)
+			--background-contrast var(--gray_950)
+			--background-input var(--gray_50)
 			--background-hover var(--gray_50)
 			--background-active var(--gray_20)
+
+			--border-input var(--gray_50)
+
+			--scrollbar-thumb var(--gray_100)
+			--scrollbar-track var(--gray_50)
+
 			--shadow rgba(150, 150, 150, .14)
 
 		&_dark
 			--primary var(--green_400)
 			--primary-dark var(--green_500)
 			--primary-light var(--green_200)
-			--primary-text var(--gray_100)
-			--secondary-text var(--gray_300)
-			--accent-text var(--green_200)
-			--contrast-text var(--gray_950)
-			--primary-background #201e2f
-			--secondary-background #2f2e40
-			--accent-background #333333
-			--contrast-background var(--gray_100)
-			--input-background rgba(255, 255, 255, .04)
-			--select-background rgba(255, 255, 255, .08)
-			--select-border rgba(255, 255, 255, .08)
-			--input-border var(--gray_800)
-			--scrollbar-thumb #121212
-			--scrollbar-track #1a1a1a
+
+			--text-primary var(--gray_100)
+			--text-secondary var(--gray_300)
+			--text-accent var(--green_200)
+			--text-contrast var(--gray_950)
+
+			--background-primary #201e2f
+			--background-secondary #2f2e40
+			--background-accent #333333
+			--background-contrast var(--gray_100)
+			--background-input rgba(255, 255, 255, .04)
+			--background-select rgba(255, 255, 255, .08)
 			--background-hover rgba(255, 255, 255, .05)
 			--background-active rgba(255, 255, 255, .1)
+
+			--border-select rgba(255, 255, 255, .08)
+			--border-input var(--gray_800)
+
+			--scrollbar-thumb #121212
+			--scrollbar-track #1a1a1a
+
 			--shadow rgba(0, 0, 0, .14)

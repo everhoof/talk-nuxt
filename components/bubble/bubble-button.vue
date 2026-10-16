@@ -46,7 +46,7 @@ export default class BubbleButton extends Vue {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  color: var(--secondary-text);
+  color: var(--text-secondary);
   font-size: 18px;
   background: transparent;
   border: 0;
@@ -54,8 +54,8 @@ export default class BubbleButton extends Vue {
   cursor: pointer;
 
   &:hover
-    color: var(--primary-text);
-    background: var(--primary-background);
+    color: var(--text-primary);
+    background: var(--background-primary);
 
     & ^[0]__hint
       visibility: visible;
@@ -81,6 +81,6 @@ export default class BubbleButton extends Vue {
 
   &_state
     &_active
-      color: var(--primary-text);
-      background: var(--primary-background);
+      color: var(--text-primary);
+      background: var(--background-primary);
 </style>

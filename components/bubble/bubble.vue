@@ -18,8 +18,8 @@ export default class Bubble extends Vue {}
   display: flex;
   column-gap: .1875rem;
   padding: .375rem;
-  background: var(--secondary-background);
-  border: 1px solid var(--primary-background);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-primary);
   border-radius: .3125rem;
   box-shadow: 0 10px 6px 0 var(--shadow);
 </style>

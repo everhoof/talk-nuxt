@@ -2,14 +2,14 @@
 	display inline-flex
 	align-items center
 	padding 0
-	color var(--secondary-text)
+	color var(--text-secondary)
 	cursor pointer
 	background transparent
 	border none
 	border-radius 5px
 
 	&:hover:not(:disabled)
-		color var(--primary-text)
+		color var(--text-primary)
 
 	&:focus
 		outline 2px solid var(--primary)
@@ -22,7 +22,7 @@
 	&__item
 		display inline-flex
 		margin-left -8px
-		border 2px solid var(--secondary-background)
+		border 2px solid var(--background-secondary)
 		border-radius 50%
 
 		&:first-child
@@ -38,6 +38,6 @@
 		font-size 10px
 		font-weight 600
 		line-height 1
-		background var(--input-background)
+		background var(--background-input)
 		border-radius 999px
 		font-feature-settings 'tnum'
