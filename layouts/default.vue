@@ -71,6 +71,7 @@ import BMessageCm from '~/components/context-menus/message-cm/message-cm.vue';
 import BUserCm from '~/components/context-menus/user-cm/user-cm.vue';
 import PoliticsRestrictedModal from '~/components/modals/politics-restricted-modal/politics-restricted-modal.vue';
 import BSnow from '~/components/snow/snow.vue';
+import { getFaviconHref, preloadFavicons } from '~/tools/favicon';
 
 @Component({
   head() {
@@ -87,6 +88,14 @@ import BSnow from '~/components/snow/snow.vue';
     }
 
     return {
+      link: [
+        {
+          hid: 'favicon-png',
+          rel: 'icon',
+          type: 'image/png',
+          href: getFaviconHref(this.$accessor.messages.unreadCount),
+        },
+      ],
       htmlAttrs: {
         class: classes,
       },
@@ -169,6 +178,7 @@ export default class Default extends Vue {
     this.messageContextMenu = (this.$refs['message-cm'] as BMessageCm).contextMenu ?? null;
 
     this.pageTitle = document.title;
+    preloadFavicons().then(() => this.$meta().refresh());
   }
 
   beforeDestroy() {
@@ -180,6 +190,8 @@ export default class Default extends Vue {
   @Watch('$accessor.messages.unreadCount')
   onUnreadCountChanged() {
     if (process.client) {
+      this.$meta().refresh();
+
       if (this.pageTitleInterval !== null) {
         window.clearInterval(this.pageTitleInterval);
       }

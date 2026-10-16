@@ -85,7 +85,7 @@ export const mutations = mutationTree(state, {
     if (index === -1) return;
     _state.rawMessages.splice(index, 1);
   },
-  INCREMENT_UNREAD: (_state) => (_state.unreadCount = _state.unreadCount + 1),
+  INCREMENT_UNREAD: (_state, count: number = 1) => (_state.unreadCount = _state.unreadCount + count),
   RESET_UNREAD: (_state) => (_state.unreadCount = 0),
   SET_IS_EVERYTHING_FETCHED: (_state, payload: FetchDirection) => (_state.isEverythingFetched = payload),
   SET_LAST_DELIVERED_ID: (_state, payload: number) => (_state.lastDeliveredId = payload),
@@ -265,7 +265,7 @@ export const actions = actionTree(
           });
 
           if (filteredMessages.length > 0 && process.client && document.visibilityState === 'hidden') {
-            commit('INCREMENT_UNREAD');
+            commit('INCREMENT_UNREAD', filteredMessages.length);
           }
 
           errorsCount = 0;

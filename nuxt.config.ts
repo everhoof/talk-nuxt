@@ -1,4 +1,5 @@
 import './environment';
+import { version as faviconVersion } from './static/favicons/version.json';
 
 export default {
   server: {
@@ -20,7 +21,7 @@ export default {
       },
     ],
     link: [
-      { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+      { hid: 'favicon-png', rel: 'icon', type: 'image/png', href: `/favicon.png?v=${faviconVersion}` },
       {
         rel: 'stylesheet',
         href:

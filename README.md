@@ -26,6 +26,25 @@ $ yarn generate
 $ yarn mc component-name
 ```
 
+#### Favicons
+
+Edit `assets/favicon/base.svg` for the mountain artwork and the shared badge settings
+in `scripts/generate-favicons.js`. Digits in `assets/favicon/digits.json` are vector
+outlines, so generation does not depend on installed fonts.
+
+```bash
+$ yarn generate:favicons
+# Also export SVG previews into .nuxt/favicons
+$ yarn generate:favicons --svg
+```
+
+Generation runs automatically before `yarn dev`, `yarn build`, and `yarn generate`.
+The chat uses the generated PNGs and preloads them for quick unread updates.
+Only the default icon has an ICO fallback. Generated files stay in `static` so
+production startup does not need the renderer. The generator also updates
+`static/favicons/version.json` with a content-based version to invalidate cached icons when
+their design changes.
+
 #### Before commit and push run:
 ```bash
 $ yarn format

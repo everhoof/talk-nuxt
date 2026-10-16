@@ -16,8 +16,12 @@
     "messenger"
   ],
   "scripts": {
+    "generate:favicons": "node scripts/generate-favicons.js",
+    "predev": "yarn generate:favicons",
     "dev": "cross-env NODE_ENV=development nuxt-ts",
+    "prebuild": "yarn generate:favicons",
     "build": "nuxt-ts build",
+    "pregenerate": "yarn generate:favicons",
     "generate": "nuxt-ts generate",
     "start": "node -r ./environment.js ./node_modules/@nuxt/typescript-runtime/bin/nuxt-ts.js start",
     "lint": "yarn lint:script",
@@ -92,6 +96,7 @@
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/router": "^1.5.0",
     "@nuxtjs/style-resources": "^1.0.0",
+    "@resvg/resvg-js": "2.6.2",
     "@types/gsap": "^3.0.0",
     "@types/luxon": "^3.4.2",
     "@types/punycode": "^2.1.0",
