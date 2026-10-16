@@ -1,7 +1,7 @@
 $button-active-color = var(--primary)
 $button-disabled-color = var(--secondary)
 $button-text-color = var(--text-primary)
-$button-active-text-color = var(--text-primary)
+$button-active-text-color = var(--text-on-primary-background)
 $button-border-color = var(--background-hover)
 $button-border-width = 1px
 $button-border-radius = .25em
@@ -58,6 +58,10 @@ $button-margin = 10px 0
 		color $button-active-text-color
 		background-color $button-active-color
 		border-color $button-active-color
+
+	&:focus-visible:not(:disabled)
+		outline 2px solid var(--focus-ring)
+		outline-offset 2px
 
 	&:disabled
 		border-color $button-disabled-color

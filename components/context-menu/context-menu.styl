@@ -13,8 +13,9 @@
 
 	&__item
 		margin 0 0 4px
-		--background-context-item var(--primary-dark)
+		--background-context-item var(--background-menu-hover)
 		--text-context-item var(--text-primary)
+		--text-context-item-hover var(--text-menu-hover)
 
 		&:last-child
 			margin-bottom 0
@@ -30,6 +31,7 @@
 			&_danger
 				--text-context-item #f04747
 				--background-context-item #f04747
+				--text-context-item-hover var(--gray_20)
 
 	&__button
 		display flex
@@ -52,9 +54,15 @@
 
 		&:not(:disabled)
 			&:hover
-				color var(--gray_20)
+				color var(--text-context-item-hover)
 				background var(--background-context-item)
 				border-radius 3px
+
+			&:focus-visible
+				color var(--text-context-item-hover)
+				background var(--background-context-item)
+				outline 2px solid var(--focus-ring)
+				outline-offset 2px
 
 	&__text
 		flex-shrink 1

@@ -11,12 +11,14 @@
 		border-radius 5px
 
 		&:hover:not(.poll-multiple-choice__choice_state_disabled)
-			background var(--background-hover)
+			background var(--background-control-hover)
+			border-color var(--border-control-hover)
 
 		&.poll-multiple-choice__choice_state_disabled
 			opacity .5
 
 		&.poll-multiple-choice__choice_state_selected
+			background var(--background-selection)
 			border-color var(--primary)
 
 		.checkbox__input
@@ -27,8 +29,8 @@
 			margin 0
 			opacity 0
 
-			&:focus + .checkbox__label:before
-				outline 2px solid var(--primary)
+			&:focus-visible + .checkbox__label:before
+				outline 2px solid var(--focus-ring)
 				outline-offset 2px
 
 		.checkbox__label

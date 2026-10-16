@@ -22,14 +22,17 @@ $switch-margin = 10px 0
 
 	&__input
 		position absolute
-		width 1px
-		height 1px
 		overflow hidden
 		clip rect(0, 0, 0, 0)
+		width 1px
+		height 1px
 		white-space nowrap
 
 		&:focus-visible + ^[0]__label:before
-			box-shadow 0 0 0 2px var(--text-primary)
+			box-shadow 0 0 0 2px var(--focus-ring)
+
+		&:not(:disabled) + ^[0]__label:hover
+			color var(--text-control-hover)
 
 		&:checked
 			& +

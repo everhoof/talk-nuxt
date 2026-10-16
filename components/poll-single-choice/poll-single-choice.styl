@@ -16,10 +16,11 @@
 		overflow-wrap break-word
 
 		&:hover:not(:disabled)
-			background var(--background-hover)
+			background var(--background-control-hover)
+			border-color var(--border-control-hover)
 
-		&:focus
-			outline 2px solid var(--primary)
+		&:focus-visible
+			outline 2px solid var(--focus-ring)
 			outline-offset 2px
 
 		&:disabled

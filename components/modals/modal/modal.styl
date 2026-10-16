@@ -57,12 +57,13 @@
 		border-radius 4px
 		outline none
 
-		&:focus
-			outline 2px solid var(--primary)
+		&:focus-visible
+			outline 2px solid var(--focus-ring)
 			outline-offset 2px
 
 		&:hover
-			background rgba(255, 255, 255, .07)
+			color var(--text-accent)
+			background var(--background-control-hover)
 
 		&:last-child
 			margin-right 0

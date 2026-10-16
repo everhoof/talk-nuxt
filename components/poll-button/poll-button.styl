@@ -5,7 +5,7 @@
 	flex 1 1 auto
 	min-height 34px
 	padding 7px 12px
-	color var(--text-primary)
+	color var(--text-on-primary-background)
 	font inherit
 	font-size 14px
 	font-weight 500
@@ -24,8 +24,8 @@
 	&:active:not(:disabled)
 		background var(--primary-dark)
 
-	&:focus
-		outline 2px solid var(--primary)
+	&:focus-visible
+		outline 2px solid var(--focus-ring)
 		outline-offset 2px
 
 	&:disabled
@@ -42,7 +42,12 @@
 		border-color transparent
 
 		&:hover:not(:disabled)
-			background var(--background-hover)
+			color var(--text-control-hover)
+			background var(--background-control-hover)
+
+		&:focus:not(:disabled)
+			color var(--text-control-hover)
+			background var(--background-control-hover)
 
 		&:active:not(:disabled)
 			background var(--background-active)

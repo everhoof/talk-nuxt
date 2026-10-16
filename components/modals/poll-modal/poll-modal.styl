@@ -43,8 +43,8 @@
 		border 1px solid var(--border-input)
 		border-radius 5px
 
-		&:focus
-			outline 2px solid var(--primary)
+		&:focus-visible
+			outline 2px solid var(--focus-ring)
 			outline-offset 2px
 
 		&:disabled
@@ -141,8 +141,8 @@
 				width 18px
 				height 18px
 
-		.switch__input:focus + .switch__label:before
-			box-shadow 0 0 0 2px var(--text-primary)
+		.switch__input:focus-visible + .switch__label:before
+			box-shadow 0 0 0 2px var(--focus-ring)
 
 		.switch__input:checked + .switch__label:after
 			left 25px

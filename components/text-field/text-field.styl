@@ -7,7 +7,7 @@ $text-field-icon-color = #b2b2b2
 $text-field-border-color = var(--border-input)
 $text-field-background = var(--background-input)
 $text-field-placeholder-color = var(--text-secondary)
-$text-field-active-color = var(--primary-dark)
+$text-field-active-color = var(--focus-ring)
 $text-field-margin = 10px 0
 
 .text-field
@@ -46,6 +46,10 @@ $text-field-margin = 10px 0
 		border-radius 3px
 		outline none
 		placeholder($text-field-placeholder-color)
+
+		&:focus-visible:not(:disabled)
+			outline 2px solid var(--focus-ring)
+			outline-offset 2px
 
 		^[0]_type_active &:not(:disabled),
 		&:focus:not(:disabled)

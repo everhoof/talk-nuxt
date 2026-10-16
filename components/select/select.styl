@@ -21,7 +21,12 @@ $select-border-color = var(--border-select)
 
 		&:hover,
 		&:focus
-			background rgba(255, 255, 255, .06)
+			background var(--background-control-hover)
+			border-color var(--border-control-hover)
+
+		&:focus-visible
+			outline 2px solid var(--focus-ring)
+			outline-offset 2px
 
 		&:after
 			content '▼'
@@ -49,7 +54,7 @@ $select-border-color = var(--border-select)
 		border-bottom 1px solid rgba(0, 0, 0, .2)
 
 		&:hover
-			background rgba(0, 0, 0, .2)
+			background var(--background-control-hover)
 
 		&:last-child
 			border-bottom 0

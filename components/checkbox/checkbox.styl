@@ -1,4 +1,4 @@
-$checkbox-checked-color = var(--primary-dark)
+$checkbox-checked-color = var(--primary)
 $checkbox-border-color = var(--gray_500)
 $checkbox-margin = 10px 0
 $checkbox-size = 1.25em
@@ -6,7 +6,7 @@ $checkbox-padding = .2em
 $checkbox-border-width = 2px
 $checkbox-border-radius = .125em
 $checkmark-width = .15em
-$checkmark-color = #FFFFFF
+$checkmark-color = var(--icon-checkmark)
 $checkbox-label-padding = .75em
 
 .checkbox
@@ -60,6 +60,13 @@ $checkbox-label-padding = .75em
 		margin 0
 		font-size inherit
 		outline none
+
+		&:not(:disabled) + ^[0]__label:hover:before
+			border-color var(--border-control-hover)
+
+		&:focus-visible + ^[0]__label:before
+			outline 2px solid var(--focus-ring)
+			outline-offset 2px
 
 		&:checked
 			& +
