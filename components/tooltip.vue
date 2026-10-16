@@ -31,7 +31,7 @@ export default class Tooltip extends Vue {
 .tooltip-light
   --background-tooltip: var(--background-secondary);
   --border-tooltip: var(--background-primary);
-  --text-tooltip: var(--primary-color);
+  --text-tooltip: var(--text-primary);
 
   position: relative;
   z-index: 1;
