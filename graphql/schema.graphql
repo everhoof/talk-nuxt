@@ -6,7 +6,6 @@ schema {
 """A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format."""
 scalar DateTime
 type Message {
-  poll: Poll
   id: Int!
   ownerId: Float
   randomId: String
@@ -23,6 +22,7 @@ type Message {
   owner: User
   pictures: [Picture!]!
   deletedBy: User
+  poll: Poll
 }
 type Mutation {
   updateOnlineStatus: Boolean!
@@ -43,7 +43,7 @@ type Mutation {
   invalidateCurrentToken: Boolean!
   invalidateTokenById(id: Int!): Boolean!
   invalidateAllTokens: Boolean!
-  createPoll(question: String!, isAnonymous: Boolean, allowMultiple: Boolean, allowChangeVote: Boolean, endsAt: DateTime, options: [String!]!): Message!
+  createPoll(question: String!, allowMultiple: Boolean, allowChangeVote: Boolean, endsAt: DateTime, isAnonymous: Boolean, options: [String!]!): Message!
   updatePoll(question: String!, allowMultiple: Boolean, allowChangeVote: Boolean, endsAt: DateTime, messageId: Int!, options: [UpdatePollOptionInput!]!): Message!
   votePoll(messageId: Int!, optionIds: [Int!]!): Poll!
   cancelPollVote(messageId: Int!): Poll!
@@ -91,6 +91,13 @@ type PollOption {
   label: String!
   votes: Int
 }
+type PollVoter {
+  id: Int!
+  username: String!
+  avatarUrl: String
+  votedAt: DateTime
+  optionIds: [Int!]!
+}
 enum PunishmentTypes {
   ban
   mute
@@ -104,6 +111,7 @@ type Query {
   isUsernameFree(username: String!): Boolean!
   getTokenByDiscordId(id: String!): Token
   getTokens: [Token!]!
+  getActivePolls: [Message!]!
   getPoll(messageId: Int!): Poll!
   getGrants: String!
   getHello: String!
@@ -152,11 +160,4 @@ enum UserState {
   ONLINE
   IDLE
   OFFLINE
-}
-type PollVoter {
-  id: Int!
-  username: String!
-  avatarUrl: String
-  votedAt: DateTime
-  optionIds: [Int!]!
 }

@@ -1,5 +1,9 @@
 export default {
   poll: {
+    pinned: 'Активный опрос',
+    previous: 'Предыдущий опрос',
+    next: 'Следующий опрос',
+    back_to_latest: 'К новым сообщениям',
     close_dialog: 'Закрыть',
     votes: 'голос | голоса | голосов',
     option_voters: 'Кто выбрал «{label}»: {count}',

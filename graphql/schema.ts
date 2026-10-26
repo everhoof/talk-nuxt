@@ -13,7 +13,6 @@ export type Scalars = {
 
 export type Message = {
   __typename?: 'Message';
-  poll?: Maybe<Poll>;
   id: Scalars['Int'];
   ownerId?: Maybe<Scalars['Float']>;
   randomId?: Maybe<Scalars['String']>;
@@ -30,6 +29,7 @@ export type Message = {
   owner?: Maybe<User>;
   pictures: Array<Picture>;
   deletedBy?: Maybe<User>;
+  poll?: Maybe<Poll>;
 };
 
 export type Mutation = {
@@ -127,10 +127,10 @@ export type MutationInvalidateTokenByIdArgs = {
 
 export type MutationCreatePollArgs = {
   question: Scalars['String'];
-  isAnonymous?: Maybe<Scalars['Boolean']>;
   allowMultiple?: Maybe<Scalars['Boolean']>;
   allowChangeVote?: Maybe<Scalars['Boolean']>;
   endsAt?: Maybe<Scalars['DateTime']>;
+  isAnonymous?: Maybe<Scalars['Boolean']>;
   options: Array<Scalars['String']>;
 };
 
@@ -206,6 +206,15 @@ export type PollOption = {
   votes?: Maybe<Scalars['Int']>;
 };
 
+export type PollVoter = {
+  __typename?: 'PollVoter';
+  id: Scalars['Int'];
+  username: Scalars['String'];
+  avatarUrl?: Maybe<Scalars['String']>;
+  votedAt?: Maybe<Scalars['DateTime']>;
+  optionIds: Array<Scalars['Int']>;
+};
+
 export enum PunishmentTypes {
   Ban = 'ban',
   Mute = 'mute',
@@ -221,6 +230,7 @@ export type Query = {
   isUsernameFree: Scalars['Boolean'];
   getTokenByDiscordId?: Maybe<Token>;
   getTokens: Array<Token>;
+  getActivePolls: Array<Message>;
   getPoll: Poll;
   getGrants: Scalars['String'];
   getHello: Scalars['String'];
@@ -313,15 +323,6 @@ export enum UserState {
   Idle = 'IDLE',
   Offline = 'OFFLINE',
 }
-
-export type PollVoter = {
-  __typename?: 'PollVoter';
-  id: Scalars['Int'];
-  username: Scalars['String'];
-  avatarUrl?: Maybe<Scalars['String']>;
-  votedAt?: Maybe<Scalars['DateTime']>;
-  optionIds: Array<Scalars['Int']>;
-};
 
 export type MessagePartsFragment = { __typename?: 'Message' } & Pick<
   Message,
@@ -607,6 +608,12 @@ export type VotePollMutation = { __typename?: 'Mutation' } & {
   votePoll: { __typename?: 'Poll' } & PollPartsFragment;
 };
 
+export type GetActivePollsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetActivePollsQuery = { __typename?: 'Query' } & {
+  getActivePolls: Array<{ __typename?: 'Message' } & MessagePartsFragment>;
+};
+
 export type GetChatDataQueryVariables = Exact<{
   fromDateTime?: Maybe<Scalars['String']>;
   reverse?: Maybe<Scalars['Boolean']>;
@@ -631,6 +638,7 @@ export type GetMessagesQueryVariables = Exact<{
   count?: Maybe<Scalars['Int']>;
   page?: Maybe<Scalars['Int']>;
   lastId?: Maybe<Scalars['Int']>;
+  fromDateTime?: Maybe<Scalars['String']>;
   reverse?: Maybe<Scalars['Boolean']>;
   poll?: Maybe<Scalars['Boolean']>;
 }>;

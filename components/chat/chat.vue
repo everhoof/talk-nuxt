@@ -14,7 +14,13 @@
             <img class="icon" src="~/assets/icons/spinner.svg" alt="" />
           </div>
         </template>
-        <div v-for="i in messages.length" :key="messages[messages.length - i].randomId" class="chat__message">
+        <div
+          v-for="i in messages.length"
+          :key="messages[messages.length - i].randomId"
+          class="chat__message"
+          :class="{ chat__message_highlighted: messages[messages.length - i].id === highlightedMessageId }"
+          :data-message-id="messages[messages.length - i].id"
+        >
           <template v-if="separators.includes(messages[messages.length - i].id)">
             <b-messages-separator :message="messages[messages.length - i]" />
           </template>
@@ -32,6 +38,9 @@
         </template>
       </div>
     </transition>
+    <button v-if="browsingHistory" type="button" class="chat__return" @click="forceScroll">
+      {{ $t('poll.back_to_latest') }} ↓
+    </button>
   </div>
   <!-- end .chat-->
 </template>
@@ -62,6 +71,10 @@ export default class Chat extends Vue {
   resizeObserver: InstanceType<typeof ResizeObserver> | null = null;
   messageListHeight = 0;
   stickToBottom = true;
+  navigating = false;
+  highlightedMessageId: number | null = null;
+  highlightTimer: ReturnType<typeof setTimeout> | null = null;
+  pollSyncFrame: number | null = null;
 
   loading = true;
   fetchMore: FetchDirection = 'none';
@@ -69,7 +82,7 @@ export default class Chat extends Vue {
 
   @Watch('messages')
   async onMessagesChange(): Promise<void> {
-    if (!this.scroll) return;
+    if (!this.scroll || this.navigating) return;
     const offsetBottom = this.scroll.scrollHeight - this.scroll.clientHeight - this.scroll.scrollTop;
 
     if (offsetBottom < 200) {
@@ -114,6 +127,10 @@ export default class Chat extends Vue {
     return messages;
   }
 
+  get browsingHistory(): boolean {
+    return !this.$accessor.settings.isPlay && this.$accessor.messages.isEverythingFetched !== 'newer';
+  }
+
   async mounted(): Promise<void> {
     this.loading = false;
 
@@ -122,6 +139,7 @@ export default class Chat extends Vue {
     this.resizeObserver = new ResizeObserver(() => {
       this.messageListHeight = this.messageList.offsetHeight;
       if (this.stickToBottom) this.scrollDownChat();
+      this.scheduleVisiblePollSync();
     });
     this.resizeObserver.observe(this.messageList);
 
@@ -145,6 +163,7 @@ export default class Chat extends Vue {
     }
 
     this.$nuxt.$on('force-scroll', this.forceScroll);
+    this.$nuxt.$on('show-message', this.showMessage);
     this.$nuxt.$on('start-message-edit', this.onMessagesChange);
   }
 
@@ -182,22 +201,68 @@ export default class Chat extends Vue {
 
   beforeDestroy(): void {
     this.resizeObserver?.disconnect();
+    if (this.pollSyncFrame !== null) window.cancelAnimationFrame(this.pollSyncFrame);
+    if (this.highlightTimer) clearTimeout(this.highlightTimer);
     this.$nuxt.$off('force-scroll', this.forceScroll);
+    this.$nuxt.$off('show-message', this.showMessage);
     this.$nuxt.$off('start-message-edit', this.onMessagesChange);
   }
 
+  async showMessage(message: Message): Promise<void> {
+    if (!this.scroll || this.navigating || this.fetchMore !== 'none') return;
+
+    this.navigating = true;
+    this.stickToBottom = false;
+    try {
+      if (!this.messages.some(({ id }) => id === message.id)) {
+        const [older, newer] = await Promise.all([
+          this.$accessor.messages.fetchMessages({
+            count: 50,
+            fromDateTime: message.createdAt,
+            reverse: true,
+          }),
+          this.$accessor.messages.fetchMessages({
+            count: 50,
+            fromDateTime: message.createdAt,
+            reverse: false,
+          }),
+        ]);
+        if (!older || !newer) return;
+
+        const messages = new Map([...older, ...newer].map((item) => [item.id, new Message(item)]));
+        messages.set(message.id, message);
+        this.$accessor.messages.SET_IS_EVERYTHING_FETCHED('none');
+        this.$accessor.messages.SET_RAW_MESSAGES(Array.from(messages.values()));
+      }
+
+      this.highlightedMessageId = message.id;
+      await this.$nextTick();
+      const target = this.messageList.querySelector<HTMLElement>(`[data-message-id="${message.id}"]`);
+      if (target) {
+        this.scroll.scrollTop +=
+          target.getBoundingClientRect().top - this.scroll.getBoundingClientRect().top - 16;
+      }
+      if (this.highlightTimer) clearTimeout(this.highlightTimer);
+      this.highlightTimer = setTimeout(() => (this.highlightedMessageId = null), 3000);
+    } finally {
+      this.navigating = false;
+    }
+  }
+
   async forceScroll(): Promise<void> {
+    if (this.navigating) return;
+    this.highlightedMessageId = null;
     if (this.$accessor.messages.isEverythingFetched !== 'newer') {
       const variables = {
         count: 100,
         reverse: true,
-        lastId: this.$accessor.messages.lastDeliveredId,
       };
 
       const messages = await this.$accessor.messages.fetchMessages(variables);
 
       if (messages) {
         this.$accessor.messages.SET_RAW_MESSAGES(messages.map((message) => new Message(message)));
+        this.$accessor.messages.SET_IS_EVERYTHING_FETCHED('newer');
         await this.$nextTick();
         this.scrollDownChat();
       }
@@ -214,8 +279,43 @@ export default class Chat extends Vue {
     }
   }
 
+  scheduleVisiblePollSync(): void {
+    if (this.pollSyncFrame !== null) return;
+    this.pollSyncFrame = window.requestAnimationFrame(() => {
+      this.pollSyncFrame = null;
+      this.syncVisiblePolls();
+    });
+  }
+
+  syncVisiblePolls(): void {
+    if (!this.scroll || this.navigating || this.$accessor.settings.isPlay || this.$accessor.settings.isOBS)
+      return;
+
+    const viewport = this.scroll.getBoundingClientRect();
+    const visible: { id: number; distance: number }[] = [];
+    this.messageList.querySelectorAll<HTMLElement>('.message-poll').forEach((poll) => {
+      const bounds = poll.getBoundingClientRect();
+      if (!bounds.height || bounds.bottom <= viewport.top || bounds.top >= viewport.bottom) return;
+
+      const message = poll.closest<HTMLElement>('[data-message-id]');
+      if (message) {
+        visible.push({
+          id: Number(message.dataset.messageId),
+          distance: Math.abs(bounds.top - viewport.top),
+        });
+      }
+    });
+
+    visible.sort((a, b) => a.distance - b.distance);
+    this.$nuxt.$emit(
+      'visible-polls-changed',
+      visible.map(({ id }) => id),
+    );
+  }
+
   async onScroll(event: Event): Promise<void> {
-    if (this.$accessor.settings.isPlay || this.fetchMore !== 'none') {
+    this.scheduleVisiblePollSync();
+    if (this.$accessor.settings.isPlay || this.navigating || this.fetchMore !== 'none') {
       return;
     }
 

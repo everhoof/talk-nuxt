@@ -1,5 +1,9 @@
 export default {
   poll: {
+    pinned: 'Active poll',
+    previous: 'Previous poll',
+    next: 'Next poll',
+    back_to_latest: 'Back to latest messages',
     close_dialog: 'Close',
     votes: 'vote | votes',
     option_voters: 'Who chose “{label}”: {count}',

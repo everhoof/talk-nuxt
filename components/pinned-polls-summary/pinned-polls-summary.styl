@@ -1,0 +1,57 @@
+.pinned-polls-summary
+	display flex
+	align-items center
+	flex 1
+	min-width 0
+	padding 4px 8px 4px 10px
+	color var(--text-primary)
+	text-align left
+	cursor pointer
+	background transparent
+	border none
+
+	@media (hover hover) and (pointer fine)
+		&:hover
+			background var(--background-hover)
+
+	&:focus-visible
+		outline 2px solid var(--primary)
+		outline-offset -2px
+
+	&__icon
+		flex-shrink 0
+		width 32px
+		height 32px
+		margin-right 8px
+		fill var(--primary)
+
+	&__text
+		display flex
+		flex-direction column
+		min-width 0
+		line-height 1.2
+
+	&__label
+		color var(--text-accent)
+		font-size 12px
+		font-weight 600
+
+	&__details
+		display flex
+		align-items baseline
+		flex-wrap wrap
+		min-width 0
+		gap 2px 8px
+
+	&__question
+		overflow hidden
+		min-width 0
+		max-width 100%
+		font-size 13px
+		white-space nowrap
+		text-overflow ellipsis
+
+	&__deadline
+		color var(--text-secondary)
+		font-size 11px
+		line-height 1.35
