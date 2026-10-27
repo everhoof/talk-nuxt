@@ -292,7 +292,7 @@ export default class Chat extends Vue {
       return;
 
     const viewport = this.scroll.getBoundingClientRect();
-    const visible: { id: number; distance: number }[] = [];
+    const visible: { id: number; top: number }[] = [];
     this.messageList.querySelectorAll<HTMLElement>('.message-poll').forEach((poll) => {
       const bounds = poll.getBoundingClientRect();
       if (!bounds.height || bounds.bottom <= viewport.top || bounds.top >= viewport.bottom) return;
@@ -301,12 +301,12 @@ export default class Chat extends Vue {
       if (message) {
         visible.push({
           id: Number(message.dataset.messageId),
-          distance: Math.abs(bounds.top - viewport.top),
+          top: bounds.top,
         });
       }
     });
 
-    visible.sort((a, b) => a.distance - b.distance);
+    visible.sort((a, b) => b.top - a.top);
     this.$nuxt.$emit(
       'visible-polls-changed',
       visible.map(({ id }) => id),

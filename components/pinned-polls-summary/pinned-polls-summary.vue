@@ -1,5 +1,5 @@
 <template>
-  <button type="button" class="pinned-polls-summary" :title="questionText" @click="$emit('click', $event)">
+  <button type="button" class="pinned-polls-summary" @click="$emit('click', $event)">
     <svg-icon name="poll" class="pinned-polls-summary__icon" aria-hidden="true" />
     <span class="pinned-polls-summary__text">
       <span class="pinned-polls-summary__label">{{ $t('poll.pinned') }}</span>
@@ -18,15 +18,10 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator';
 import { DateTime } from 'luxon';
 import { PollPartsFragment } from '~/graphql/schema';
 import BFormattedPollText from '~/components/formatted-poll-text/formatted-poll-text.vue';
-import { pollText } from '~/tools/poll-formatting';
 
 @Component({ name: 'b-pinned-polls-summary', components: { BFormattedPollText } })
 export default class PinnedPollsSummary extends Vue {
   @Prop({ type: Object, required: true }) readonly poll!: PollPartsFragment;
-
-  get questionText(): string {
-    return pollText(this.poll.question);
-  }
 
   get endTime(): string {
     if (!this.poll.endsAt) return '';
