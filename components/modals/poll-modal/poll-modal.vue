@@ -5,19 +5,28 @@
       <form class="poll-modal" @submit.prevent="submitPoll">
         <div class="poll-modal__body scrollbar">
           <div class="poll-modal__field">
-            <label class="poll-modal__label" for="poll-question">
+            <label
+              id="poll-question-label"
+              class="poll-modal__label"
+              for="poll-question"
+              @click="questionInput.focus()"
+            >
               {{ $t('poll.question') }}
               <span aria-hidden="true">*</span>
             </label>
-            <input
-              id="poll-question"
+            <b-rich-input
               ref="questionInput"
-              v-model="question"
-              class="poll-modal__input"
+              input-id="poll-question"
+              labelledby="poll-question-label"
+              :model-value="question"
+              class="poll-modal__rich-input"
               :placeholder="$t('poll.question_placeholder')"
-              maxlength="300"
+              :max-length="300"
               required
+              single-line
               :disabled="fieldsDisabled"
+              @change="onQuestionChange"
+              @enter="submitPoll"
             />
           </div>
           <div class="poll-modal__options" role="group" aria-labelledby="poll-options-label">
@@ -27,17 +36,25 @@
             </div>
             <div class="poll-modal__options-list">
               <div v-for="(option, index) in options" :key="option.key" class="poll-modal__option">
-                <label :for="`poll-option-${option.key}`" class="poll-modal__option-label">
+                <label
+                  :id="`poll-option-label-${option.key}`"
+                  :for="`poll-option-${option.key}`"
+                  class="poll-modal__option-label"
+                >
                   {{ $t('poll.option', { number: index + 1 }) }}
                 </label>
-                <input
-                  :id="`poll-option-${option.key}`"
-                  v-model="option.label"
-                  class="poll-modal__input"
+                <b-rich-input
+                  :input-id="`poll-option-${option.key}`"
+                  :labelledby="`poll-option-label-${option.key}`"
+                  :model-value="option.label"
+                  class="poll-modal__rich-input"
                   :placeholder="$t('poll.option', { number: index + 1 })"
-                  maxlength="100"
+                  :max-length="100"
                   required
+                  single-line
                   :disabled="fieldsDisabled"
+                  @change="onOptionChange(option, $event)"
+                  @enter="submitPoll"
                 />
                 <b-button
                   v-if="options.length > 1"
@@ -143,6 +160,8 @@ import BModal from '~/components/modals/modal/modal.vue';
 import BButton from '~/components/button/button.vue';
 import BPollButton from '~/components/poll-button/poll-button.vue';
 import BSwitch from '~/components/switch/switch.vue';
+import BRichInput from '~/components/rich-input/rich-input.vue';
+import { pollText } from '~/tools/poll-formatting';
 import CreatePoll from '~/graphql/mutations/create-poll.graphql';
 import UpdatePoll from '~/graphql/mutations/update-poll.graphql';
 import GetPoll from '~/graphql/queries/get-poll.graphql';
@@ -169,10 +188,11 @@ interface PollFormOption {
     BButton,
     BPollButton,
     BSwitch,
+    BRichInput,
   },
 })
 export default class PollModal extends Vue {
-  @Ref() questionInput!: HTMLInputElement;
+  @Ref() questionInput!: BRichInput;
 
   question = '';
   options: PollFormOption[] = [
@@ -350,7 +370,7 @@ export default class PollModal extends Vue {
   async focusOption(index: number): Promise<void> {
     await this.$nextTick();
 
-    const inputs = this.$el.querySelectorAll<HTMLInputElement>('.poll-modal__option input');
+    const inputs = this.$el.querySelectorAll<HTMLElement>('.poll-modal__option [role="textbox"]');
     const input = inputs[index];
     input?.focus();
   }
@@ -375,14 +395,22 @@ export default class PollModal extends Vue {
     this.focusOption(nextIndex);
   }
 
+  onQuestionChange(value: { text: string; html: string }): void {
+    this.question = value.html;
+  }
+
+  onOptionChange(option: PollFormOption, value: { text: string; html: string }): void {
+    option.label = value.html;
+  }
+
   get valid(): boolean {
     if (!this.ready || !this.validDeadline) {
       return false;
     }
 
-    const question = this.question.trim();
+    const question = pollText(this.question).trim();
 
-    if (!question || this.question.length > 300) {
+    if (!question || question.length > 300) {
       return false;
     }
 
@@ -393,9 +421,9 @@ export default class PollModal extends Vue {
     }
 
     for (const option of this.options) {
-      const label = option.label.trim();
+      const label = pollText(option.label).trim();
 
-      if (!label || option.label.length > 100) {
+      if (!label || label.length > 100) {
         return false;
       }
     }
@@ -433,7 +461,7 @@ export default class PollModal extends Vue {
     const labels = new Set<string>();
 
     for (const option of this.options) {
-      const label = option.label.trim().toLowerCase();
+      const label = pollText(option.label).trim().toLowerCase();
 
       if (!label) {
         continue;

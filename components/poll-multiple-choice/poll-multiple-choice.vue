@@ -13,7 +13,7 @@
       :disabled="disabled"
       @input="select(option.id, $event)"
     >
-      {{ option.label }}
+      <b-formatted-poll-text :content="option.label" />
     </b-checkbox>
   </div>
 </template>
@@ -22,11 +22,13 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 import BCheckbox from '~/components/checkbox/checkbox.vue';
 import { PollPartsFragment } from '~/graphql/schema';
+import BFormattedPollText from '~/components/formatted-poll-text/formatted-poll-text.vue';
 
 @Component({
   name: 'b-poll-multiple-choice',
   components: {
     BCheckbox,
+    BFormattedPollText,
   },
 })
 export default class PollMultipleChoice extends Vue {

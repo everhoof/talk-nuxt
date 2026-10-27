@@ -11,7 +11,9 @@
     <template #default>
       <div class="poll-voters">
         <div class="poll-voters__body scrollbar">
-          <p class="poll-voters__question">{{ poll.question }}</p>
+          <p class="poll-voters__question">
+            <b-formatted-poll-text :content="poll.question" />
+          </p>
           <div class="poll-voters__summary">
             <p class="poll-voters__hint" role="status">
               {{ $t('poll.voters_total', { count: poll.totalVotes }) }}
@@ -29,7 +31,7 @@
               :aria-labelledby="`poll-voters-answer-${group.id}`"
             >
               <h3 :id="`poll-voters-answer-${group.id}`" class="poll-voters-group__heading">
-                <span>{{ group.label }}</span>
+                <b-formatted-poll-text :content="group.label" />
                 <span class="poll-voters-group__count">{{ group.voters.length }}</span>
               </h3>
               <ul v-if="group.voters.length" class="poll-voters-group__list">
@@ -68,8 +70,9 @@ import { DateTime } from 'luxon';
 import BModal from '~/components/modals/modal/modal.vue';
 import BPollVoterAvatar from '~/components/poll-voter-avatar/poll-voter-avatar.vue';
 import { PollPartsFragment } from '~/graphql/schema';
+import BFormattedPollText from '~/components/formatted-poll-text/formatted-poll-text.vue';
 
-@Component({ name: 'b-poll-voters-modal', components: { BModal, BPollVoterAvatar } })
+@Component({ name: 'b-poll-voters-modal', components: { BModal, BPollVoterAvatar, BFormattedPollText } })
 export default class PollVotersModal extends Vue {
   @Prop({ type: Object, required: true }) poll!: PollPartsFragment;
   @Prop({ type: Number }) currentUserId!: number | null;
