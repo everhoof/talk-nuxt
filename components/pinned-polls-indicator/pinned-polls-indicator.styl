@@ -1,0 +1,27 @@
+.pinned-polls-indicator
+	position absolute
+	top 50%
+	left 4px
+	overflow hidden
+	width 3px
+	height 40px
+	pointer-events none
+	transform translateY(-50%)
+
+	&__track
+		display flex
+		flex-direction column
+		transition transform .2s ease
+		gap 3px
+
+	&__segment
+		display block
+		flex-shrink 0
+		width 3px
+		background var(--primary)
+		border-radius 2px
+		opacity .25
+		transition opacity .2s ease
+
+		&_active
+			opacity 1

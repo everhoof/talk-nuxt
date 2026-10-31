@@ -54,6 +54,25 @@
 	&__options-list
 		vertical-spacing(8px)
 
+	&__rich-input
+		flex 1
+		width 100%
+		min-width 0
+
+		.ProseMirror
+			min-height 36px
+			padding 9px 12px
+			color var(--text-primary)
+			font-size 14px
+			line-height 16px
+			background var(--background-input)
+			border 1px solid var(--border-input)
+			border-radius 5px
+
+			&:focus-visible
+				outline 2px solid var(--focus-ring)
+				outline-offset 2px
+
 	&__options-header
 		display flex
 		justify-content space-between
@@ -71,7 +90,7 @@
 		align-items center
 		horizontal-spacing(6px)
 
-		.poll-modal__input
+		.poll-modal__rich-input
 			margin-left 0
 
 	&__option-label

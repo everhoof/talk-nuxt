@@ -83,7 +83,8 @@
 	.chat
 		background transparent
 
-	.page__aside
+	.page__aside,
+	.pinned-polls
 		background var(--background-secondary)
 		isolation isolate
 
@@ -93,16 +94,19 @@
 			top 0
 			right 0
 			left 0
-			bottom 52px
+			bottom 0
 			z-index -1
 			pointer-events none
 			background url('/nightmare-night/sidebar-bats-muted.svg') center / 100% 100% no-repeat
 			opacity .22
 
+	.page__aside:before
+		bottom 52px
+
 	.aside-panel
 		background transparent
 
-	.page__chat
+	.page__conversation
 		isolation isolate
 
 		&:before
@@ -114,18 +118,19 @@
 			opacity .165
 			inset 0
 
-	&.page_theme_light .page__chat:before
+	&.page_theme_light .page__conversation:before
 		opacity .1875
 
-	&.page_theme_light .page__aside:before
+	&.page_theme_light .page__aside:before,
+	&.page_theme_light .pinned-polls:before
 		opacity .24
 
 	+below(size-s)
-		.page__chat:before
+		.page__conversation:before
 			background-size 108px 108px
 			opacity .12
 
-		&.page_theme_light .page__chat:before
+		&.page_theme_light .page__conversation:before
 			opacity .15
 
 @keyframes nightmare-night-sway

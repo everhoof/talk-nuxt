@@ -5,6 +5,7 @@ import { Message, MessageType } from '~/types/message';
 import {
   DeleteMessageMutation,
   DeleteMessageMutationVariables,
+  GetActivePollsQuery,
   GetChatDataQuery,
   GetChatDataQueryVariables,
   GetMessagesQuery,
@@ -16,6 +17,7 @@ import GetChatData from '~/graphql/queries/get-chat-data.graphql';
 import MessageDeleted from '~/graphql/subscriptions/message-deleted.graphql';
 import MessageUpdated from '~/graphql/subscriptions/message-updated.graphql';
 import GetMessages from '~/graphql/queries/get-messages.graphql';
+import GetActivePolls from '~/graphql/queries/get-active-polls.graphql';
 import DeleteMessage from '~/graphql/mutations/delete-message.graphql';
 import { sleep } from '~/tools/util';
 
@@ -34,6 +36,8 @@ export const namespaced = true;
 
 export const state = () => ({
   rawMessages: [] as Message[],
+  activePolls: [] as Message[],
+  pollServerTimeOffset: 0,
   unreadCount: 0 as number,
   lastDeliveredId: null as null | number,
   isEverythingFetched: 'newer' as FetchDirection,
@@ -42,7 +46,13 @@ export const state = () => ({
 
 export const mutations = mutationTree(state, {
   SET_RAW_MESSAGES: (_state, payload: Message[]) => (_state.rawMessages = payload),
+  SET_ACTIVE_POLLS: (_state, payload: Message[]) => {
+    _state.activePolls = [...payload].sort((a, b) => a.id - b.id);
+    const serverTime = payload[0]?.poll?.serverTime;
+    if (serverTime) _state.pollServerTimeOffset = Date.parse(serverTime) - Date.now();
+  },
   CLEAR_POLL_DATA: (_state) => {
+    _state.activePolls = [];
     for (const message of _state.rawMessages) {
       message.poll = null;
     }
@@ -65,6 +75,17 @@ export const mutations = mutationTree(state, {
     }
   },
   UPDATE_MESSAGE: (_state, payload: Message) => {
+    if (payload.type === MessageType.POLL) {
+      const pollIndex = _state.activePolls.findIndex(({ id }) => id === payload.id);
+      if (payload.poll && !payload.poll.isClosed && !payload.deletedAt) {
+        if (pollIndex === -1) _state.activePolls.push(payload);
+        else _state.activePolls.splice(pollIndex, 1, payload);
+        _state.activePolls.sort((a, b) => a.id - b.id);
+        _state.pollServerTimeOffset = Date.parse(payload.poll.serverTime) - Date.now();
+      } else if (pollIndex !== -1) {
+        _state.activePolls.splice(pollIndex, 1);
+      }
+    }
     let index = -1;
     if (payload.randomId !== null) {
       index = _state.rawMessages.findIndex((message) => message.randomId === payload.randomId);
@@ -101,7 +122,7 @@ export const actions = actionTree(
   { state, mutations, getters },
   {
     async nuxtServerInit({ dispatch }, context: Context) {
-      await dispatch('fetchBaseData', context);
+      await Promise.all([dispatch('fetchBaseData', context), dispatch('fetchActivePolls')]);
     },
 
     nuxtClientInit({ dispatch, commit }) {
@@ -111,18 +132,41 @@ export const actions = actionTree(
 
           return `${auth.loggedIn}:${auth.userId}`;
         },
-        () => commit('CLEAR_POLL_DATA'),
+        () => {
+          commit('CLEAR_POLL_DATA');
+          dispatch('fetchActivePolls');
+        },
       );
 
       dispatch('subscribeMessageCreated');
       dispatch('subscribeMessageDeleted');
       dispatch('subscribeMessageUpdated');
+      dispatch('fetchActivePolls');
+      window.setInterval(() => dispatch('fetchActivePolls'), 30 * 1000);
 
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
           commit('RESET_UNREAD');
+          dispatch('fetchActivePolls');
         }
       });
+    },
+
+    async fetchActivePolls({ commit }) {
+      const client = this.app.apolloProvider?.defaultClient;
+      if (!client) return;
+
+      const auth = this.app.$accessor.auth;
+      const userId = auth.userId;
+      const loggedIn = auth.loggedIn;
+      try {
+        const { data, errors } = await client.query<GetActivePollsQuery>({ query: GetActivePolls });
+        if (errors || !data || userId !== auth.userId || loggedIn !== auth.loggedIn) return;
+        commit(
+          'SET_ACTIVE_POLLS',
+          data.getActivePolls.map((message) => new Message(message)),
+        );
+      } catch (e) {}
     },
 
     async fetchBaseData({ commit }) {

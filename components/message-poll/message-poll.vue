@@ -50,7 +50,9 @@
         </template>
       </b-actions-dropdown>
     </div>
-    <h3 :id="`poll-question-${message.id}`" class="message-poll__question">{{ question }}</h3>
+    <h3 :id="`poll-question-${message.id}`" class="message-poll__question">
+      <b-formatted-poll-text :content="question" />
+    </h3>
     <div class="message-poll__content">
       <b-poll-results
         v-if="showResults"
@@ -99,6 +101,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator';
 import { DateTime } from 'luxon';
+import BFormattedPollText from '~/components/formatted-poll-text/formatted-poll-text.vue';
 import BPollVotersModal from '~/components/modals/poll-voters-modal/poll-voters-modal.vue';
 import BPollButton from '~/components/poll-button/poll-button.vue';
 import BActionsDropdown from '~/components/actions-dropdown/actions-dropdown.vue';
@@ -125,6 +128,7 @@ import CancelPollVote from '~/graphql/mutations/cancel-poll-vote.graphql';
 @Component({
   name: 'b-message-poll',
   components: {
+    BFormattedPollText,
     BPollButton,
     BActionsDropdown,
     BContextMenuItem,

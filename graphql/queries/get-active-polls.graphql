@@ -1,0 +1,7 @@
+#import "../fragments/message-parts.graphql"
+
+query GetActivePolls {
+  getActivePolls {
+    ...MessageParts
+  }
+}

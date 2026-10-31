@@ -5,7 +5,7 @@
     :aria-label="selectedAnswerLabel"
   >
     <div class="poll-result-item__label">
-      <span class="poll-result-item__answer">{{ option.label }}</span>
+      <b-formatted-poll-text class="poll-result-item__answer" :content="option.label" />
       <div class="poll-result-item__meta">
         <span v-if="isAnonymous" class="poll-vote-count">
           <span class="poll-vote-count__number">{{ voteCount }}</span>
@@ -14,7 +14,7 @@
         <b-poll-voters-preview
           v-else-if="voters.length"
           :voters="voters"
-          :label="$t('poll.option_voters', { label: option.label, count: option.votes })"
+          :label="$t('poll.option_voters', { label: answerText, count: option.votes })"
           :disabled="busy"
           @click="$emit('voters')"
         />
@@ -31,10 +31,12 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 import BPollVotersPreview from '~/components/poll-voters-preview/poll-voters-preview.vue';
 import { PollPartsFragment } from '~/graphql/schema';
+import BFormattedPollText from '~/components/formatted-poll-text/formatted-poll-text.vue';
+import { pollText } from '~/tools/poll-formatting';
 
 @Component({
   name: 'b-poll-result-item',
-  components: { BPollVotersPreview },
+  components: { BPollVotersPreview, BFormattedPollText },
 })
 export default class PollResultItem extends Vue {
   @Prop({ type: Boolean, default: false }) isAnonymous!: boolean;
@@ -52,7 +54,11 @@ export default class PollResultItem extends Vue {
 
     const votedLabel = this.$t('poll.voted');
 
-    return `${this.option.label}: ${votedLabel}, ${this.percent}%`;
+    return `${this.answerText}: ${votedLabel}, ${this.percent}%`;
+  }
+
+  get answerText(): string {
+    return pollText(this.option.label);
   }
 
   get voteLabel(): string {
