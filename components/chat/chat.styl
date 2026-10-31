@@ -30,7 +30,10 @@
 	&__return
 		position sticky
 		bottom 12px
+		display inline-flex
+		align-items center
 		flex-shrink 0
+		gap 4px
 		margin-top -36px
 		padding 8px 14px
 		color var(--text-primary)
@@ -40,6 +43,13 @@
 		border 1px solid var(--primary)
 		border-radius 20px
 		align-self center
+
+	&__return-icon
+		flex-shrink 0
+		width 16px
+		height 16px
+		fill none
+		padding-top: 1px;
 
 	@-moz-document url-prefix()
 		&

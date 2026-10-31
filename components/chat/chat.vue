@@ -39,7 +39,8 @@
       </div>
     </transition>
     <button v-if="browsingHistory" type="button" class="chat__return" @click="forceScroll">
-      {{ $t('poll.back_to_latest') }} ↓
+      {{ $t('poll.back_to_latest') }}
+      <svg-icon name="chevron_down" class="chat__return-icon" aria-hidden="true" />
     </button>
   </div>
   <!-- end .chat-->
