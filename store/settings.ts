@@ -10,7 +10,7 @@ export const state = () => ({
   theme: 'dark' as string,
   compact: true as boolean,
   snow: false as boolean,
-  nightmareNight: true as boolean,
+  nightmareNight: false as boolean,
   messageSound: 'none' as string,
   warning: true as boolean,
   timeZone: 'Europe/Moscow' as string,
