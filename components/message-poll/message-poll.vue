@@ -178,7 +178,11 @@ export default class MessagePoll extends Vue {
   }
 
   get showResults(): boolean {
-    if (this.isClosed || this.hasVoted) {
+    if (!this.poll) {
+      return false;
+    }
+
+    if (this.$accessor.settings.isOBS || this.isClosed || this.hasVoted) {
       return true;
     }
 
@@ -246,7 +250,7 @@ export default class MessagePoll extends Vue {
   }
 
   get canPreviewResults(): boolean {
-    if (!this.canManage || this.hasVoted || this.isClosed) {
+    if (this.$accessor.settings.isOBS || !this.canManage || this.hasVoted || this.isClosed) {
       return false;
     }
 
