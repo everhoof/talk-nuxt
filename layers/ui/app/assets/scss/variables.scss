@@ -1,0 +1,12 @@
+@use './breakpoints';
+
+$trn-speed: .15s;
+$trn-ease: ease;
+$grids: (
+  'default': (
+    'cols': 12,
+    'gutter': 10px,
+    'containerMaxWidth': 1440px,
+    'breakpoints': breakpoints.$breakpoints,
+  ),
+);

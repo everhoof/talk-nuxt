@@ -1,0 +1,31 @@
+@use '@ui-assets/scss/mixins';
+
+.warning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 10px;
+  color: #ffffff;
+  font-weight: 600;
+  background: var(--primary);
+
+  &__button {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    color: #ffffff;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: 2px;
+    @include mixins.default-transition(color);
+
+    &:hover {
+      color: var(--background-primary);
+    }
+
+    &-icon {
+      fill: currentColor;
+    }
+  }
+}

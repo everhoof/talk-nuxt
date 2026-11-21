@@ -1,0 +1,27 @@
+.messages-separator {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  text-align: center;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--background-secondary);
+  }
+
+  &__date {
+    display: inline-block;
+    flex-shrink: 0;
+    padding: 0 8px;
+    color: var(--text-separator);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &__pumpkin {
+    vertical-align: -3px;
+    margin-right: 2px;
+    opacity: .85;
+  }
+}

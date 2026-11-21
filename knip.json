@@ -1,0 +1,33 @@
+{
+  "$schema": "https://unpkg.com/knip/schema.json",
+  "entry": [
+    "layers/*/app/components/**/*.vue",
+    "layers/*/app/components/**/index.ts",
+    "layers/*/app/assets/scss/**/*.scss",
+    "tests/**/*.test.mjs",
+    "tests/browser/**/*.mjs",
+    "scripts/*.cjs",
+    "ecosystem.config.cjs",
+    "app/components/**/*.vue",
+    "app/components/**/index.ts",
+    "app/**/*.scss",
+    "app/compat/browser.ts"
+  ],
+  "project": [
+    "*.{js,cjs,mjs,ts,cts,mts}",
+    "{app,layers}/**/*.{scss,sass,js,ts,vue}",
+    "scripts/*.cjs",
+    "tests/**/*.mjs"
+  ],
+  "ignoreDependencies": [
+    "postcss-html",
+    "postcss-preset-env",
+    "postcss-scss",
+    "vue-tsc"
+  ],
+  "ignoreMembers": [
+    "SYSTEM",
+    "LOGIN",
+    "LOGOUT"
+  ]
+}

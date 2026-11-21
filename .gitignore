@@ -88,3 +88,15 @@ sw.*
 
 .env.local
 .env.*.local
+
+# Nuxt 4 production output
+.output/
+.data/
+*.tsbuildinfo
+test-results/
+playwright-report/
+.nitro/
+.fleet/
+.pnpm-store/
+.stylelintcache
+.husky/_

@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    uses: rhapsodic-dev/renovate-ci-gate/.github/workflows/renovate-ci-gate.yml@v1
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: gate
+    if: needs.gate.outputs.run_ci == 'true'
+
+    steps:
+      - uses: actions/checkout@v7
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: "pnpm"
+          cache-dependency-path: 'pnpm-lock.yaml'
+
+      - name: Install dependencies 👨🏻‍💻
+        run: pnpm ci
+
+      - name: Run typecheck
+        run: pnpm run typecheck
+
+      - name: Code css style check
+        run: pnpm run lint:styles
+
+      - name: Code js style check
+        run: pnpm run lint:scripts
+
+      - name: Check unused code
+        run: pnpm run lint:knip
+
+      - name: Run build
+        run: pnpm run build
+
+      - name: Run unit and SSR tests
+        run: pnpm test
+
+      - name: Install browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run browser regressions
+        run: pnpm test:browser

@@ -1,0 +1,50 @@
+@use 'sass:math';
+
+$form-error-color: var(--text-error);
+$form-error-height: 52px;
+$form-error-font-size: 14px;
+$form-error-border-radius: 4px;
+$form-error-icon-size: 24px;
+$form-error-icon-padding: 2px;
+$form-error-icon-bg: var(--background-primary);
+$form-error-margin: 10px 0;
+
+.form-error {
+  position: relative;
+  display: block;
+  width: 200px;
+  min-height: $form-error-height;
+  padding: 16px;
+  font-size: $form-error-font-size;
+  line-height: $form-error-font-size;
+  border: 2px solid $form-error-color;
+  border-radius: $form-error-border-radius;
+
+  &_width {
+    &_full {
+      width: 100%;
+    }
+  }
+
+  &_with {
+    &_margin {
+      margin: $form-error-margin;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    top: -(math.div($form-error-icon-size, 2) - $form-error-icon-padding);
+    left: -(math.div($form-error-icon-size, 2) - $form-error-icon-padding);
+    width: $form-error-icon-size;
+    height: $form-error-icon-size;
+    padding: $form-error-icon-padding;
+    fill: $form-error-color;
+    background: $form-error-icon-bg;
+    border-radius: 50%;
+  }
+
+  &__text:not(:last-child) {
+    margin-bottom: 8px;
+  }
+}

@@ -1,0 +1,108 @@
+@use '@ui-assets/scss/mixins';
+
+.poll-voters {
+  width: 440px;
+  max-width: 100%;
+
+  &__body {
+    @include mixins.vertical-spacing(20px);
+
+    overflow-y: auto;
+    max-height: 65vh;
+    padding-right: 8px;
+  }
+
+  &__question {
+    margin: 0;
+    color: inherit;
+    font-size: 16px;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+  }
+
+  &__summary {
+    @include mixins.vertical-spacing(8px);
+  }
+
+  &__hint {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
+
+.poll-voters-group {
+  @include mixins.vertical-spacing(12px);
+
+  padding-top: 16px;
+  border-top: 1px solid var(--border-input);
+
+  &__heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 0;
+    color: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    @include mixins.horizontal-spacing(12px);
+
+    > span:first-child {
+      min-width: 0;
+      overflow-wrap: break-word;
+    }
+  }
+
+  &__count {
+    flex-shrink: 0;
+    min-width: 2ch;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    text-align: right;
+    font-feature-settings: 'tnum';
+  }
+
+  &__list {
+    @include mixins.vertical-spacing(8px);
+
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.poll-voter {
+  display: flex;
+  align-items: center;
+  @include mixins.horizontal-spacing(10px);
+
+  &__details {
+    @include mixins.vertical-spacing(4px);
+
+    min-width: 0;
+  }
+
+  &__identity {
+    display: flex;
+    align-items: baseline;
+    @include mixins.horizontal-spacing(8px);
+  }
+
+  &__name {
+    min-width: 0;
+    font-size: 14px;
+    overflow-wrap: break-word;
+  }
+
+  &__marker, &__time {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+
+  &__time {
+    font-feature-settings: 'tnum';
+  }
+}

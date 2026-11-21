@@ -1,0 +1,69 @@
+.message-donation {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  max-width: 600px;
+  margin: 10px 0 10px 16px;
+  padding: 10px 10px 10px 50px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #e25454, #644191);
+  border-radius: 5px;
+
+  &__logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 100%;
+    background: rgb(255, 255, 255, .2);
+  }
+
+  &__logo-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    fill: #ffffff;
+  }
+
+  &__top {
+    margin: 0 0 4px;
+    font-style: italic;
+    opacity: .9;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__username {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__amount {
+    font-size: 16px;
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  &__text {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    opacity: .9;
+  }
+
+  &_type {
+    &_deleted {
+      opacity: .4;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+@use '@ui-assets/scss/mixins';
+
+.chat {
+  position: absolute;
+  inset: 0;
+  overflow: hidden auto;
+  min-height: 0;
+  overflow-anchor: none;
+
+  &__container {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  &__messages {
+    position: relative;
+    width: 100%;
+  }
+
+  &__message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: background-color .3s ease;
+
+    &_state {
+      &_highlighted {
+        background: var(--background-active);
+      }
+    }
+  }
+
+  &__status, &__jump {
+    position: absolute;
+    left: 50%;
+    z-index: 5;
+    max-width: calc(100% - 32px);
+    padding: 8px 14px;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 13px;
+    text-align: center;
+    background: var(--background-secondary);
+    border: 1px solid var(--border-input);
+    border-radius: 16px;
+    transform: translateX(-50%);
+    @include mixins.default-shadow;
+  }
+
+  &__status {
+    &_direction {
+      &_older {
+        top: 12px;
+      }
+
+      &_newer {
+        bottom: 60px;
+      }
+    }
+
+    button {
+      padding: 0 4px;
+      color: var(--primary);
+      font: inherit;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+    }
+  }
+
+  &__jump {
+    bottom: 16px;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text-accent);
+    }
+
+    &:disabled {
+      cursor: wait;
+    }
+  }
+
+  &__jump-icon {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    fill: none;
+  }
+}

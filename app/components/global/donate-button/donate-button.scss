@@ -1,0 +1,13 @@
+.donate-button {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  fill: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    fill: var(--text-accent);
+  }
+}

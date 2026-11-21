@@ -1,0 +1,14 @@
+$size-xs: 1px;
+$size-s: 480px;
+$size-m: 768px;
+$size-l: 1025px;
+$size-xl: 1170px;
+$size-xxl: 1440px;
+$breakpoints: (
+  'xs': $size-xs,
+  's': $size-s,
+  'm': $size-m,
+  'l': $size-l,
+  'xl': $size-xl,
+  'xxl': $size-xxl,
+);
