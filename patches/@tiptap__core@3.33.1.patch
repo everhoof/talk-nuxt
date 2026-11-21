@@ -1,0 +1,132 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index c21a1a98e10e50dac0d34ac5255d450cdee907b0..90f061e8caf2facd8c79718de0586995327c0206 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -5493,10 +5493,15 @@ function run(config) {
+ }
+ let tiptapDragFromOtherEditor = null;
+ const createClipboardPasteEvent = (text) => {
+-	var _event$clipboardData;
+-	const event = new ClipboardEvent("paste", { clipboardData: new DataTransfer() });
+-	(_event$clipboardData = event.clipboardData) === null || _event$clipboardData === void 0 || _event$clipboardData.setData("text/html", text);
+-	return event;
++	try {
++		var _event$clipboardData;
++		const event = new ClipboardEvent("paste", { clipboardData: new DataTransfer() });
++		(_event$clipboardData = event.clipboardData) === null || _event$clipboardData === void 0 || _event$clipboardData.setData("text/html", text);
++		return event;
++	} catch {
++		// Older browsers can expose ClipboardEvent or DataTransfer without constructible APIs.
++		return null;
++	}
+ };
+ /**
+ * Create an paste rules plugin. When enabled, it will cause pasted
+@@ -5508,7 +5513,7 @@ function pasteRulesPlugin(props) {
+ 	let dragSourceElement = null;
+ 	let isPastedFromProseMirror = false;
+ 	let isDroppedFromProseMirror = false;
+-	let pasteEvent = typeof ClipboardEvent !== "undefined" ? new ClipboardEvent("paste") : null;
++	let pasteEvent = createClipboardPasteEvent("");
+ 	let dropEvent;
+ 	try {
+ 		dropEvent = typeof DragEvent !== "undefined" ? new DragEvent("drop") : null;
+@@ -5535,7 +5540,7 @@ function pasteRulesPlugin(props) {
+ 		} catch {
+ 			dropEvent = null;
+ 		}
+-		pasteEvent = typeof ClipboardEvent !== "undefined" ? new ClipboardEvent("paste") : null;
++		pasteEvent = createClipboardPasteEvent("");
+ 		return tr;
+ 	};
+ 	editor.on("destroy", () => {
+diff --git a/dist/index.js b/dist/index.js
+index 23ffc4b09b793ccda67f38209fe4f00de92ffd41..fbb099d8a2d5fbd1f500f79a83b7269616e11184 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -5481,10 +5481,15 @@ function run(config) {
+ }
+ let tiptapDragFromOtherEditor = null;
+ const createClipboardPasteEvent = (text) => {
+-	var _event$clipboardData;
+-	const event = new ClipboardEvent("paste", { clipboardData: new DataTransfer() });
+-	(_event$clipboardData = event.clipboardData) === null || _event$clipboardData === void 0 || _event$clipboardData.setData("text/html", text);
+-	return event;
++	try {
++		var _event$clipboardData;
++		const event = new ClipboardEvent("paste", { clipboardData: new DataTransfer() });
++		(_event$clipboardData = event.clipboardData) === null || _event$clipboardData === void 0 || _event$clipboardData.setData("text/html", text);
++		return event;
++	} catch {
++		// Older browsers can expose ClipboardEvent or DataTransfer without constructible APIs.
++		return null;
++	}
+ };
+ /**
+ * Create an paste rules plugin. When enabled, it will cause pasted
+@@ -5496,7 +5501,7 @@ function pasteRulesPlugin(props) {
+ 	let dragSourceElement = null;
+ 	let isPastedFromProseMirror = false;
+ 	let isDroppedFromProseMirror = false;
+-	let pasteEvent = typeof ClipboardEvent !== "undefined" ? new ClipboardEvent("paste") : null;
++	let pasteEvent = createClipboardPasteEvent("");
+ 	let dropEvent;
+ 	try {
+ 		dropEvent = typeof DragEvent !== "undefined" ? new DragEvent("drop") : null;
+@@ -5523,7 +5528,7 @@ function pasteRulesPlugin(props) {
+ 		} catch {
+ 			dropEvent = null;
+ 		}
+-		pasteEvent = typeof ClipboardEvent !== "undefined" ? new ClipboardEvent("paste") : null;
++		pasteEvent = createClipboardPasteEvent("");
+ 		return tr;
+ 	};
+ 	editor.on("destroy", () => {
+diff --git a/src/PasteRule.ts b/src/PasteRule.ts
+index 76569a7b8e05a6998358ad24a43104f58efd7eca..0b05d40dd21a37fc2d5df420efbd62edb43d2de3 100644
+--- a/src/PasteRule.ts
++++ b/src/PasteRule.ts
+@@ -183,13 +183,18 @@ function run(config: {
+ let tiptapDragFromOtherEditor: Editor | null = null
+ 
+ const createClipboardPasteEvent = (text: string) => {
+-  const event = new ClipboardEvent('paste', {
+-    clipboardData: new DataTransfer(),
+-  })
+-
+-  event.clipboardData?.setData('text/html', text)
+-
+-  return event
++  try {
++    const event = new ClipboardEvent('paste', {
++      clipboardData: new DataTransfer(),
++    })
++  
++    event.clipboardData?.setData('text/html', text)
++  
++    return event
++  } catch {
++    // Older browsers can expose ClipboardEvent or DataTransfer without constructible APIs.
++    return null
++  }
+ }
+ 
+ /**
+@@ -202,7 +207,7 @@ export function pasteRulesPlugin(props: { editor: Editor; rules: PasteRule[] }):
+   let dragSourceElement: Element | null = null
+   let isPastedFromProseMirror = false
+   let isDroppedFromProseMirror = false
+-  let pasteEvent = typeof ClipboardEvent !== 'undefined' ? new ClipboardEvent('paste') : null
++  let pasteEvent = createClipboardPasteEvent('')
+   let dropEvent: DragEvent | null
+ 
+   try {
+@@ -249,7 +254,7 @@ export function pasteRulesPlugin(props: { editor: Editor; rules: PasteRule[] }):
+     } catch {
+       dropEvent = null
+     }
+-    pasteEvent = typeof ClipboardEvent !== 'undefined' ? new ClipboardEvent('paste') : null
++    pasteEvent = createClipboardPasteEvent('')
+ 
+     return tr
+   }

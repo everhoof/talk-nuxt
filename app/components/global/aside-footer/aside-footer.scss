@@ -1,0 +1,77 @@
+@use '@ui-assets/scss/mixins';
+
+.aside-footer {
+  display: block;
+  width: 100%;
+
+  &__profile {
+    position: relative;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    width: 100%;
+    padding: 5px 10px;
+    color: inherit;
+    cursor: pointer;
+    user-select: none;
+    background: transparent;
+    border: none;
+    border-radius: 5px;
+    @include mixins.default-transition;
+
+    &:hover {
+      background-color: var(--background-hover);
+    }
+
+    &:active {
+      background-color: var(--background-active);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__avatar {
+    --user-avatar__size: 34px;
+
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  &__info {
+    max-width: calc(100% - 34px);
+  }
+
+  &__username {
+    display: block;
+    overflow: hidden;
+    margin-right: 10px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__dropdown {
+    z-index: 300;
+    min-width: var(--reka-dropdown-menu-trigger-width);
+    margin: 0 0 4px;
+    padding: 4px;
+    background: var(--background-primary);
+    border: none;
+    border-radius: 4px;
+  }
+
+  &__dropdown-item {
+    margin: 0 0 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -12,46 +12,41 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [14]
 
     steps:
-      - name: Set NODE_ENV
-        run: NODE_ENV=$APP_NODE_ENV
-        env:
-          APP_NODE_ENV: ${{ secrets.PRODUCTION_NODE_ENV }}
-
       - name: Checkout 🛎
         uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Setup node env
         uses: actions/setup-node@v7
         with:
-          node-version: ${{ matrix.node }}
-          check-latest: true
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
-
-      - name: Cache node_modules
-        uses: actions/cache@v6
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          node-version-file: '.nvmrc'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: pnpm ci
 
       - name: Run linter
-        run: yarn lint
+        run: pnpm lint
+
+      - name: Check types
+        run: pnpm typecheck
+
+      - name: Create version file
+        run: |
+          echo "{\"version\": $(date +%s)}" > public/version.json
 
       - name: Build project
-        run: yarn build
+        run: pnpm build
+
+      - name: Check production SSR
+        run: pnpm test
 
       - name: Configure SSH
         run: |
@@ -66,7 +61,6 @@ jobs:
             IdentityFile ~/.ssh/production.key
             StrictHostKeyChecking no
             SendEnv APP_DIR
-            SendEnv APP_NODE_ENV
           END
         env:
           SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
@@ -74,24 +68,10 @@ jobs:
           SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
           SSH_PORT: ${{ secrets.PRODUCTION_SSH_PORT }}
 
-      - name: Create version file
-        run: |
-          echo "{\"version\": $(date +%s)}" > static/version.json
-
       - name: Tar files
-        run: >
-          tar --ignore-failed-read --exclude=./artifacts.tgz -czvf artifacts.tgz
-          .nuxt
-          static
-          .env.production
-          deploy.sh
-          ecosystem.config.js
-          environment.js
-          nuxt.config.ts
-          package.json
-          tsconfig.json
-          yarn.lock
-          || [[ $? -eq 1 ]]
+        run: |
+          cp .env.production .env
+          tar -czf artifacts.tgz .output .env deploy.sh ecosystem.config.cjs .nvmrc
 
       - name: Copy dist files
         run: |
@@ -104,7 +84,6 @@ jobs:
           UDP_MESSAGE: ${{ secrets.PRODUCTION_UDP_MESSAGE }}
 
       - name: Run deploy script
-        run: ssh production 'cd $APP_DIR && export NODE_ENV=$APP_NODE_ENV && bash deploy.sh'
+        run: ssh production 'cd $APP_DIR && bash deploy.sh'
         env:
           APP_DIR: ${{ secrets.PRODUCTION_APP_DIR }}
-          APP_NODE_ENV: ${{ secrets.PRODUCTION_NODE_ENV }}

@@ -1,0 +1,190 @@
+@use '@ui-assets/scss/mixins';
+
+.message {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  flex-shrink: 0;
+  min-height: 60px;
+  padding: 8px 50px 8px 70px;
+  line-height: 1.5;
+  @include mixins.default-transition(background, opacity);
+
+  &:hover, &:active, &:focus {
+    background: rgb(255, 255, 255, .05);
+  }
+
+  &_view {
+    &_compact {
+      min-height: unset;
+      padding: 2px 50px 2px 16px;
+
+      & .message {
+        &__content {
+          display: block;
+        }
+
+        &__header {
+          margin-right: 5px;
+        }
+
+        &__timestamp {
+          margin-right: 5px;
+          margin-left: 0;
+        }
+
+        &__text {
+          display: inline;
+          margin-bottom: 0;
+
+          & p:first-child {
+            display: inline;
+          }
+        }
+
+        &__avatar {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &_type {
+    &_system {
+      &:hover, &:active, &:focus {
+        background: inherit;
+      }
+
+      & .message {
+        &__header {
+          margin-right: 0;
+        }
+
+        &__timestamp {
+          margin-left: 0;
+          font-style: italic;
+        }
+
+        &__text {
+          font-style: italic;
+        }
+      }
+    }
+
+    &_deleted {
+      opacity: .4;
+
+      & .message__text {
+        font-style: italic;
+      }
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    &_mentioning {
+      background: rgb(250, 166, 26, .05);
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1;
+        display: block;
+        width: 3px;
+        background: #faa61a;
+      }
+    }
+  }
+
+  &_state {
+    &_not-delivered {
+      opacity: .5;
+    }
+  }
+
+  &__avatar {
+    --user-avatar__size: 40px;
+
+    position: absolute;
+    top: 33px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    user-select: none;
+    object-fit: cover;
+    object-position: center center;
+    border-radius: 50%;
+
+    &:first-child {
+      top: 10px;
+    }
+  }
+
+  &__author-name {
+    display: inline-block;
+    vertical-align: bottom;
+    overflow: hidden;
+    max-width: 150px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__header {
+    white-space: pre-line;
+  }
+
+  &__timestamp {
+    display: inline;
+    vertical-align: bottom;
+    margin-left: 8px;
+    color: var(--gray_300);
+    font-size: 11px;
+    line-height: 21px;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  &__text {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+    word-break: normal;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__emoji {
+    vertical-align: bottom;
+    max-width: 50px;
+    max-height: 50px;
+    padding: 1px;
+    object-fit: contain;
+  }
+
+  &__body {
+    flex-grow: 1;
+    flex-shrink: 0;
+  }
+
+  &__embed {
+    padding: 5px 0 0 35px;
+
+    & iframe {
+      border: none;
+    }
+  }
+}

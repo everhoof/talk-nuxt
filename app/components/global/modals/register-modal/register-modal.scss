@@ -1,0 +1,29 @@
+@use '@ui-assets/scss/mixins';
+
+.register-modal {
+  display: block;
+
+  &__row {
+    text-align: center;
+    @include mixins.clearfix;
+  }
+
+  &__link {
+    display: block;
+    margin: 8px 0;
+    font-size: 14px;
+  }
+
+  &__buttons {
+    @include mixins.clearfix;
+  }
+
+  &__button {
+    float: left;
+
+    &:last-child {
+      float: right;
+      margin-left: 10px;
+    }
+  }
+}

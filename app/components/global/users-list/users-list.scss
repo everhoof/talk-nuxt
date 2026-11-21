@@ -1,0 +1,69 @@
+@use '@ui-assets/scss/mixins';
+
+.users-list {
+  display: block;
+  list-style: none;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    height: 46px;
+    margin-bottom: 2px;
+    padding: 5px 10px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 5px;
+    @include mixins.default-transition;
+
+    &:hover {
+      background-color: var(--background-hover);
+    }
+
+    &:active {
+      background-color: var(--background-active);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+    @include mixins.compact {
+      height: 34px;
+      padding: 4px;
+    }
+  }
+
+  &__info {
+    overflow: hidden;
+  }
+
+  &__avatar.user-avatar {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    margin-right: 10px;
+    object-fit: cover;
+    border-radius: 50%;
+    @include mixins.compact {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  &__username {
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__status {
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 16px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}

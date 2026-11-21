@@ -1,0 +1,13 @@
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: false
+  esbuild: true
+  simple-git-hooks: true
+  unrs-resolver: true
+
+minimumReleaseAgeExclude:
+  - '@rhapsodic/*'
+
+patchedDependencies:
+  '@tiptap/core@3.33.1': patches/@tiptap__core@3.33.1.patch
+  fnv1a-64@0.1.2: patches/fnv1a-64@0.1.2.patch

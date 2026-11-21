@@ -1,0 +1,94 @@
+@use '@ui-assets/scss/mixins';
+@use 'sass:math';
+
+$text-field-size: 38px;
+$text-field-size-small: 34px;
+$text-field-font-size: 14px;
+$text-field-icon-size: 12px;
+$text-field-text-color: var(--text-primary);
+$text-field-icon-color: #b2b2b2;
+$text-field-border-color: var(--border-input);
+$text-field-background: var(--background-input);
+$text-field-placeholder-color: var(--text-secondary);
+$text-field-active-color: var(--focus-ring);
+$text-field-margin: 10px 0;
+
+.text-field {
+  position: relative;
+  display: block;
+  width: 200px;
+  font-size: $text-field-font-size;
+
+  &_width {
+    &_full {
+      width: 100%;
+    }
+  }
+
+  &_with {
+    &_icon {
+      & .text-field__input {
+        padding: 0 20px 0 30px;
+      }
+    }
+
+    &_margin {
+      margin: $text-field-margin;
+    }
+  }
+
+  &_size {
+    &_small {
+      & .text-field__input {
+        height: $text-field-size-small;
+        line-height: $text-field-size-small;
+      }
+    }
+  }
+
+  &__input {
+    width: 100%;
+    height: $text-field-size;
+    padding: 0 20px;
+    color: $text-field-text-color;
+    line-height: $text-field-size;
+    background: $text-field-background;
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    @include mixins.placeholder($text-field-placeholder-color);
+
+    &:focus-visible:not(:disabled) {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .text-field_type_active &:not(:disabled), &:focus:not(:disabled) {
+      & + {
+        & .text-field__icon {
+          fill: $text-field-active-color;
+        }
+      }
+    }
+
+    &:disabled {
+      opacity: var(--disabled-alpha);
+
+      & + {
+        & .text-field__icon {
+          opacity: var(--disabled-alpha);
+        }
+      }
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    width: $text-field-icon-size;
+    height: $text-field-icon-size;
+    margin-top: (-1 * math.div($text-field-icon-size, 2));
+    fill: $text-field-icon-color;
+  }
+}

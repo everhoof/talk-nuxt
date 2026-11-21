@@ -1,0 +1,28 @@
+@keyframes progress {
+  0% {
+    /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Preserve the existing progress animation. */
+    background-position: 0 0;
+  }
+
+  100% {
+    /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Preserve the existing progress animation. */
+    background-position: 30px 0;
+  }
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: var(--background-primary);
+  border-radius: 0;
+
+  &__progress-state {
+    height: 100%;
+    background-color: var(--background-secondary);
+    background-image: linear-gradient(-45deg, rgb(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgb(255, 255, 255, .15) 50%, rgb(255, 255, 255, .15) 75%, transparent 75%, transparent);
+    background-size: 30px 30px;
+    border-radius: 2px;
+    /* stylelint-disable-next-line plugin/no-low-performance-animation-properties -- Preserve the existing transition. */
+    transition: width 1s ease-out;
+    animation: progress 2s linear infinite;
+  }
+}

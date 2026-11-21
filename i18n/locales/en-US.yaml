@@ -1,0 +1,125 @@
+picture_upload_error: Unable to upload the image. Please try again.
+session_check_error: Unable to check your session. Retry or sign in again.
+session_retry: Retry
+chat:
+  send_error: Could not send the message. Please try again.
+  retry_send: Retry sending
+  messages: Chat messages
+  loading: Loading messages…
+  load_error: Could not load messages.
+  retry: Retry
+  jump_to_latest: Jump to latest
+  new_messages: "{count} new messages"
+poll:
+  pinned: Active poll
+  previous: Previous poll
+  next: Next poll
+  back_to_latest: Back to latest messages
+  deleted: Deleted poll
+  deleted_hint: This poll was deleted. Voting is unavailable.
+  close_dialog: Close
+  votes: vote | votes
+  option_voters: "Who chose “{label}”: {count}"
+  you: You
+  option_empty: Nobody chose this option.
+  voters_empty: Nobody has voted yet.
+  voters_multiple: A participant may appear under several answers.
+  voters_total: "Total participants: {count}"
+  voters: Who voted
+  anonymous_immutable: Anonymity cannot be changed after publication.
+  anonymous_hint: Participant names are hidden, including from moderators.
+  anonymous_closed: Anonymous poll ended
+  anonymous: Anonymous poll
+  cancel: Cancel
+  options: Answer options
+  finished_at: Ended {time}
+  participants: "Participants:"
+  preview_results: View results
+  show_options: Show options
+  actions: Poll actions
+  allow_multiple: Multiple answers
+  allow_change_vote: Allow vote retraction
+  set_deadline: End at a set time
+  end_time: End date and time
+  end_time_error: Choose a time in the future.
+  ends_at: "Ends: {time}"
+  closed: This poll has ended
+  close: End poll
+  close_error: Could not end the poll. Try again.
+  cancel_vote: Retract vote
+  cancel_vote_error: Could not cancel your vote. Try again.
+  submit_vote: Vote
+  multiple_vote_hint: Choose one or more options.
+  multiple_results_hint: Percentages are based on participants; their sum may exceed 100%.
+  title: Poll
+  create: Create poll
+  edit: Edit poll
+  save: Save
+  saving: Saving…
+  loading: Loading…
+  edit_hint: Renaming an option preserves its votes. Deleting an option removes its votes.
+  update_error: Could not update the poll. Check your permissions and try again.
+  question: Question
+  question_placeholder: What shall we ask the listeners?
+  settings_hint: 1–20 options. Results appear after voting or when the poll ends.
+  option: Option {number}
+  remove_option: Remove option {number}
+  add_option: Add option
+  duplicate_options: Answer options must be different.
+  publish: Create poll
+  creating: Publishing…
+  voted: You have voted
+  total: "Total participants: {count}"
+  vote_hint: Click an option to vote.
+  login_hint: Sign in to vote.
+  create_error: Could not create the poll. Check your permissions and try again.
+  vote_error: Could not vote. Try again.
+  load_error: Could not load the poll.
+  retry: Retry
+welcome: Welcome
+username_fill_error: Fill in the username field.
+username_length_error: "Wrong nickname format: max 32, min 3 characters."
+username_regex_error: "Wrong nickname format: [a-z, 0-9, _]."
+email_fill_error: Fill in the email field.
+email_length_error: Wrong email format.
+email_regex_error: Wrong email format.
+password_fill_error: Fill in the password field.
+passport_length_error: Password must be at least 5 characters long.
+passwords_do_not_match: Passwords do not match.
+modals:
+  profile:
+    registered: Registered
+    was_online: Was online
+  settings:
+    title: Settings
+    dark_theme: Dark theme
+    compact_view: Compact view
+    snow: Snow
+    nightmare_night: Nightmare Night decorations
+    message_sound: Message Sound
+    message_sound_options:
+      none: None
+      sound_1: Sound 1
+      sound_2: Sound 2
+  punishment:
+    times:
+      forever: Forever
+      day: 1 Day
+      hour: 1 Hour
+      ten_minutes: 10 Minutes
+      custom: Custom
+      minutes: minutes
+    mute_time: Mute time
+    mute_reason: Mute reason
+    mute_reason_placeholder: Violation of the chat rules
+    delete_all_users_messages: Delete all user's messages
+    mute: Mute
+  politics:
+    title: Warning!
+    text: We ask you to respect the broadcasters and listeners and not to start the topic of politics. Everyone has their own opinion on the current situation, and we respect them all.<br /><br />Users who ignore this request will be muted for 15 minutes.
+    close: Ok. I get it.
+reminders:
+  confirm_email:
+    message: Confirm your email address to use the chat.
+    action: Confirm
+warning: We ask you to respect the presenters and other listeners, and not to raise the topic of politics.

@@ -1,0 +1,63 @@
+@use '@ui-assets/scss/mixins';
+
+.poll-button.button {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  color: var(--text-on-primary-background);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  word-break: normal;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 5px;
+  overflow-wrap: break-word;
+  @include mixins.horizontal-spacing(8px);
+
+  &:hover:not(:disabled) {
+    background: var(--primary-light);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--primary-dark);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--text-secondary);
+    cursor: default;
+    background: var(--background-input);
+    border-color: var(--border-input);
+    opacity: .6;
+  }
+
+  &.poll-button_variant_secondary {
+    flex-grow: 0;
+    color: var(--text-secondary);
+    background: transparent;
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      color: var(--text-control-hover);
+      background: var(--background-control-hover);
+    }
+
+    &:focus:not(:disabled) {
+      color: var(--text-control-hover);
+      background: var(--background-control-hover);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--background-active);
+    }
+  }
+}

@@ -1,0 +1,84 @@
+.actions-dropdown {
+  flex-shrink: 0;
+
+  &__trigger.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  &__menu.context-menu {
+    position: fixed;
+    width: auto;
+    max-width: calc(100vw - 16px);
+    padding: 6px;
+    background: var(--background-primary);
+    border: 1px solid var(--border-input);
+    border-radius: 5px;
+
+    .context-menu__button:focus-visible {
+      outline: 2px solid var(--focus-ring);
+    }
+
+    .context-menu__item {
+      margin: 0;
+    }
+
+    .context-menu__button {
+      display: flex;
+      align-items: center;
+      height: auto;
+      padding: 8px 6px;
+      font-size: 14px;
+      font-weight: 400;
+      text-align: left;
+      border-radius: 3px;
+
+      &:hover, &:focus-visible {
+        color: var(--text-control-hover);
+        background: var(--background-control-hover);
+      }
+    }
+
+    .context-menu__icon {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      margin: 0 8px 0 2px;
+    }
+
+    .context-menu__text {
+      flex: 1 1 auto;
+      padding: 0 6px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .context-menu__item_color_danger .context-menu__button {
+      color: var(--text-error);
+    }
+  }
+
+  &__trigger.button:hover:not(:disabled), &__trigger.button:focus-visible {
+    color: var(--text-control-hover);
+    background: var(--background-control-hover);
+    border-color: transparent;
+  }
+}

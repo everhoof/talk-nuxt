@@ -5,8 +5,9 @@ find . -maxdepth 1 ! -name node_modules ! -name artifacts.tgz ! -name . ! -name 
 tar -xvf artifacts.tgz
 rm artifacts.tgz
 
-NODE_ENV=$NODE_ENV pm2 stop ecosystem.config.js
-nvm exec 14.18.1 npm i -g yarn
-nvm exec 14.18.1 yarn --frozen-lockfile --production
-NODE_ENV=$NODE_ENV pm2 start ecosystem.config.js
+nvm install
+nvm use
+npm install -g pm2
+NODE_ENV=production pm2 stop ecosystem.config.cjs
+NODE_ENV=production pm2 start ecosystem.config.cjs
 pm2 save

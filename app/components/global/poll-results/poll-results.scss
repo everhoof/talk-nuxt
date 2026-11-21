@@ -1,0 +1,5 @@
+@use '@ui-assets/scss/mixins';
+
+.poll-results {
+  @include mixins.vertical-spacing(6px);
+}

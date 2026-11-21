@@ -1,0 +1,12 @@
+.snow {
+  display: block;
+  opacity: .8;
+
+  &__snowflake {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ffffff;
+    border-radius: 100%;
+  }
+}

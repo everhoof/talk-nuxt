@@ -1,0 +1,444 @@
+@use 'sass:math';
+@use '@ui-assets/scss/mixins';
+@use '@ui-assets/scss/breakpoints';
+@use '@ui-assets/scss/variables';
+@use 'sass:map';
+
+@mixin cols-size($cols, $gutter, $breakpoints) {
+  min-height: 1px;
+  padding: 0 $gutter;
+
+  &_align-self {
+    &_start {
+      align-items: flex-start;
+    }
+
+    &_center {
+      align-items: center;
+    }
+
+    &_end {
+      align-items: flex-end;
+    }
+
+    @each $name, $breakpoint in $breakpoints {
+      &_#{$name} {
+        &-start {
+          @include mixins.above($breakpoint) {
+            align-items: flex-start;
+          }
+        }
+
+        &-center {
+          @include mixins.above($breakpoint) {
+            align-items: center;
+          }
+        }
+
+        &-end {
+          @include mixins.above($breakpoint) {
+            align-items: flex-end;
+          }
+        }
+      }
+    }
+  }
+
+  &_size {
+    &_auto {
+      flex-grow: 1;
+    }
+
+    @each $name, $breakpoint in $breakpoints {
+      &_#{$name} {
+        &-auto {
+          @include mixins.above($breakpoint) {
+            flex-grow: 1;
+          }
+        }
+      }
+    }
+
+    @for $num from 1 through $cols {
+      &_#{$num} {
+        flex: 0 0 math.percentage(math.div($num, $cols));
+        max-width: math.percentage(math.div($num, $cols));
+      }
+    }
+
+    @each $name, $breakpoint in $breakpoints {
+      &_#{$name} {
+        @for $num from 1 through $cols {
+          &-#{$num} {
+            @include mixins.above($breakpoint) {
+              flex: 0 0 math.percentage(math.div($num, $cols));
+              max-width: math.percentage(math.div($num, $cols));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &_order {
+    @for $num from 1 through $cols {
+      &_#{$num} {
+        order: $num;
+      }
+    }
+
+    &_first {
+      order: -1;
+    }
+
+    &_last {
+      order: ($cols + 1);
+    }
+
+    @each $name, $breakpoint in $breakpoints {
+      &_#{$name} {
+        @for $num from 1 through $cols {
+          &-#{$num} {
+            @include mixins.above($breakpoint) {
+              order: $num;
+            }
+          }
+        }
+
+        &-first {
+          @include mixins.above($breakpoint) {
+            order: -1;
+          }
+        }
+
+        &-last {
+          @include mixins.above($breakpoint) {
+            order: ($cols + 1);
+          }
+        }
+      }
+    }
+  }
+
+  &_push {
+    @for $num from 1 through $cols {
+      &_#{$num} {
+        position: relative;
+        left: math.percentage(math.div($num, $cols));
+      }
+    }
+
+    @each $name, $breakpoint in $breakpoints {
+      &_#{$name} {
+        @for $num from 1 through $cols {
+          &-#{$num} {
+            @include mixins.above($breakpoint) {
+              position: relative;
+              left: math.percentage(math.div($num, $cols));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &_pull {
+    @for $num from 1 through $cols {
+      &_#{$num} {
+        position: relative;
+        right: math.percentage(math.div($num, $cols));
+      }
+    }
+
+    @each $name, $breakpoint in $breakpoints {
+      &_#{$name} {
+        @for $num from 1 through $cols {
+          &-#{$num} {
+            @include mixins.above($breakpoint) {
+              position: relative;
+              right: math.percentage(math.div($num, $cols));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &_offset {
+    @for $num from 1 through $cols {
+      &_#{$num} {
+        margin-left: math.percentage(math.div($num, $cols));
+      }
+    }
+
+    @each $name, $breakpoint in $breakpoints {
+      &_#{$name} {
+        @for $num from 1 through $cols {
+          &-#{$num} {
+            @include mixins.above($breakpoint) {
+              margin-left: math.percentage(math.div($num, $cols));
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.grid {
+  display: block;
+  box-sizing: border-box;
+  min-width: 320px;
+
+  &__container {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: map.get(variables.$grids, 'default', 'containerMaxWidth');
+    margin: 0 auto;
+    padding: 0 map.get(variables.$grids, 'default', 'gutter');
+
+    &_width {
+      &_full {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &__group {
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    margin: 0 (-(map.get(variables.$grids, 'default', 'gutter')));
+
+    &_no {
+      &_gutters {
+        .grid {
+          &__col {
+            padding: 0;
+          }
+        }
+      }
+    }
+
+    &_align-items {
+      &_start {
+        align-items: flex-start;
+      }
+
+      &_center {
+        align-items: center;
+      }
+
+      &_end {
+        align-items: flex-end;
+      }
+
+      @each $name, $breakpoint in breakpoints.$breakpoints {
+        &_#{$name} {
+          &-start {
+            @include mixins.above($breakpoint) {
+              align-items: flex-start;
+            }
+          }
+
+          &-center {
+            @include mixins.above($breakpoint) {
+              align-items: center;
+            }
+          }
+
+          &-end {
+            @include mixins.above($breakpoint) {
+              align-items: flex-end;
+            }
+          }
+        }
+      }
+    }
+
+    &_justify-content {
+      &_start {
+        justify-content: flex-start;
+      }
+
+      &_center {
+        justify-content: center;
+      }
+
+      &_end {
+        justify-content: flex-end;
+      }
+
+      &_around {
+        justify-content: space-around;
+      }
+
+      &_between {
+        justify-content: space-between;
+      }
+
+      @each $name, $breakpoint in breakpoints.$breakpoints {
+        &_#{$name} {
+          &-start {
+            @include mixins.above($breakpoint) {
+              justify-content: flex-start;
+            }
+          }
+
+          &-center {
+            @include mixins.above($breakpoint) {
+              justify-content: center;
+            }
+          }
+
+          &-end {
+            @include mixins.above($breakpoint) {
+              justify-content: flex-end;
+            }
+          }
+
+          &-around {
+            @include mixins.above($breakpoint) {
+              justify-content: space-around;
+            }
+          }
+
+          &-between {
+            @include mixins.above($breakpoint) {
+              justify-content: space-between;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__col {
+    position: relative;
+    flex-grow: 1;
+    flex-basis: 0%;
+    box-sizing: border-box;
+  }
+
+  .grid {
+    &__group {
+      & > .grid__col {
+        @include cols-size(map.get(variables.$grids, 'default', 'cols'), map.get(variables.$grids, 'default', 'gutter'), breakpoints.$breakpoints);
+      }
+    }
+  }
+
+  &__holder {
+    box-sizing: border-box;
+    height: 100%;
+  }
+
+  &__panel {
+    display: block;
+    box-sizing: border-box;
+    padding: map.get(variables.$grids, 'default', 'gutter');
+  }
+
+  &__breaker {
+    display: block;
+    box-sizing: border-box;
+    width: 100% !important;
+
+    @each $name, $breakpoint in breakpoints.$breakpoints {
+      &_#{$name} {
+        display: block;
+        @include mixins.above($breakpoint) {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &__view-panel {
+    box-sizing: border-box;
+    padding: 30px 0;
+  }
+
+  @each $name, $gridFields in variables.$grids {
+    &_name {
+      &_type {
+        .grid {
+          &__container {
+            max-width: map.get($gridFields, 'containerMaxWidth');
+
+            &_width {
+              &_full {
+                width: 100%;
+                max-width: 100%;
+              }
+
+              &_fixed {
+                @each $name, $breakpoint in map.get($gridFields, 'breakpoints') {
+                  @include mixins.above($breakpoint) {
+                    width: 320px;
+                    @if $breakpoint > 420 {
+                      width: 100%;
+                      max-width: ($breakpoint - 100px);
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          &__group {
+            & > .grid__col {
+              @include cols-size(map.get($gridFields, 'cols'), map.get($gridFields, 'gutter'), map.get($gridFields, 'breakpoints'));
+            }
+
+            &_no {
+              &_gutters {
+                .grid {
+                  &__col {
+                    padding: 0;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &_style {
+      &_debug {
+        .grid {
+          &__col {
+            outline: 1px solid red;
+          }
+
+          &__panel {
+            background: #f4f4f4;
+          }
+
+          &__holder {
+            outline: 1px solid green;
+          }
+        }
+      }
+
+      &_demo {
+        .grid {
+          &__col {
+            padding-top: (math.div(map.get($gridFields, 'gutter'), 2));
+            padding-bottom: (math.div(map.get($gridFields, 'gutter'), 2));
+          }
+
+          &__panel {
+            color: #7d7d7d;
+            font-size: 14px;
+            line-height: 1.2;
+            background: #f4f4f4;
+            border: 1px solid #c7c7c7;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,349 @@
+@use '@ui-assets/scss/mixins';
+@use '@ui-assets/scss/breakpoints';
+
+.page {
+  --aside-width: 250px;
+
+  &_style {
+    &_compact {
+      --aside-width: 180px;
+    }
+
+    &_obs {
+      zoom: 2;
+
+      & .page__aside, & .page__aside-footer, & .page__footer, & .page__warning {
+        display: none;
+      }
+
+      & .page__chat {
+        margin-right: 0;
+      }
+    }
+  }
+
+  overflow: hidden;
+  height: 100%;
+  min-height: 100%;
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__body {
+    overflow: hidden;
+    height: 100%;
+    min-height: 100%;
+    color: var(--text-primary);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    background: var(--background-primary);
+
+    &_overflow {
+      &_hidden {
+        overflow: hidden;
+      }
+    }
+  }
+
+  &__header {
+    z-index: 99;
+    width: 100%;
+  }
+
+  &__main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    overflow: hidden;
+    flex-grow: 1;
+    flex-basis: 100%;
+
+    &_state {
+      &_mobile-open {
+        & .page__aside-footer {
+          right: 0;
+          @include mixins.above(breakpoints.$size-m) {
+            right: calc(calc(var(--aside-width) * -1) + 40px);
+          }
+        }
+      }
+    }
+    @include mixins.above(breakpoints.$size-m) {
+      &_state {
+        &_pc-open {
+          & .page__chat {
+            margin-right: var(--aside-width);
+          }
+
+          & .page__footer {
+            margin-right: -4px;
+          }
+
+          & .page__aside-footer {
+            right: 0;
+          }
+
+          & .page__aside-menu {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+  }
+
+  &__chat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    max-height: 100%;
+    margin: 0 20px 0 0;
+    @include mixins.default-transition(margin-right);
+    @include mixins.above(breakpoints.$size-m) {
+      margin-right: 4px;
+    }
+  }
+
+  &__footer {
+    background: transparent;
+    @include mixins.default-transition(margin-right);
+    @include mixins.above(breakpoints.$size-m) {
+      margin-right: 36px;
+    }
+  }
+
+  &__aside {
+    position: absolute;
+    top: 0;
+    right: calc(var(--aside-width) * -1);
+    bottom: 0;
+    z-index: 100;
+    overflow: hidden auto;
+    flex-shrink: 0;
+    width: var(--aside-width);
+    @include mixins.default-transition;
+
+    &_state {
+      &_mobile-open {
+        right: 0;
+        @include mixins.above(breakpoints.$size-m) {
+          right: calc(var(--aside-width) * -1);
+        }
+
+        & + {
+          & .page__aside-button {
+            right: var(--aside-width);
+          }
+        }
+      }
+
+      &_pc-open {
+        @include mixins.above(breakpoints.$size-m) {
+          right: 0;
+        }
+      }
+    }
+
+    &-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      fill: currentColor;
+      cursor: pointer;
+      background-color: var(--gray_700);
+      @include mixins.default-transition;
+      @include mixins.above(breakpoints.$size-m) {
+        display: none;
+      }
+    }
+
+    &-icon {
+      width: 17px;
+      height: 17px;
+    }
+  }
+
+  &__aside-footer {
+    position: absolute;
+    right: calc(var(--aside-width) * -1);
+    bottom: 0;
+    z-index: 200;
+    display: flex;
+    width: var(--aside-width);
+    height: 52px;
+    padding: 4px;
+    background-color: var(--background-primary);
+    @include mixins.default-transition(right);
+    @include mixins.above(breakpoints.$size-m) {
+      right: calc(calc(var(--aside-width) * -1) + 40px);
+      padding: 4px 4px 4px 50px;
+    }
+  }
+
+  &__aside-menu {
+    position: absolute;
+    top: 10px;
+    left: 4px;
+    display: none;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 4px 0;
+    color: var(--text-primary);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    @include mixins.above(breakpoints.$size-m) {
+      display: block;
+    }
+
+    &:hover {
+      color: var(--text-accent);
+    }
+
+    & .icon {
+      fill: currentColor;
+    }
+  }
+
+  &__reminder {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+  }
+
+  &__error {
+    align-self: center;
+    margin: 0 auto;
+  }
+
+  &__snow {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+:focus-visible {
+  outline-color: var(--focus-ring);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+#__nuxt, #__layout {
+  height: 100%;
+}
+
+a {
+  color: var(--primary-light);
+  text-decoration: none;
+
+  &:hover, &:active, &:focus {
+    color: var(--primary);
+    text-decoration: none;
+  }
+}
+
+.scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--scrollbar-track);
+  }
+}
+
+.link {
+  &_no {
+    &_styles {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.icon {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.page-error {
+  max-width: 320px;
+  padding: 24px;
+  background: var(--background-secondary);
+  border-radius: 4px;
+  @include mixins.default-shadow;
+
+  &__illustration {
+    margin: 0 0 16px;
+    text-align: center;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__image {
+    display: inline-block;
+    max-height: 100px;
+  }
+
+  &__text {
+    margin: 0 0 16px;
+    font-size: 20px;
+    text-align: center;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+mention {
+  padding: 2px 4px;
+  color: #7c76ee;
+  font-weight: 600;
+  cursor: pointer;
+  background: #6360a444;
+  border-radius: 3px;
+  @include mixins.default-transition(background);
+
+  &:hover {
+    color: #ffffff;
+    background: #6360a4ee;
+  }
+}

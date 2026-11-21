@@ -1,12 +1,22 @@
 overwrite: true
 schema: https://dev.im.everhoof.ru/api/graphql
-documents: ./graphql/**/*.graphql
+documents: ./app/graphql/{fragments,queries,mutations,subscriptions}/**/*.graphql
 generates:
-  graphql/schema.ts:
+  app/graphql/schema-types.ts:
+    config:
+      scalars:
+        DateTime: string
     plugins:
       - typescript
+  app/graphql/operations.ts:
+    config:
+      scalars:
+        DateTime: string
+      importSchemaTypesFrom: ./app/graphql/schema-types.ts
+      enumType: native-enum
+    plugins:
       - typescript-operations
-  graphql/schema.graphql:
+  app/graphql/schema.graphql:
     plugins:
       - schema-ast
     config:

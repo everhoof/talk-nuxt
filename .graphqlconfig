@@ -1,4 +1,4 @@
 {
   "name": "GraphQL Schema",
-  "schemaPath": "./graphql/schema.graphql"
+  "schemaPath": "./app/graphql/schema.graphql"
 }

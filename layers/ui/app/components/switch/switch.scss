@@ -1,0 +1,123 @@
+@use '@ui-assets/scss/mixins';
+@use 'sass:math';
+
+$switch-checked-color: var(--primary);
+$switch-unchecked-color: var(--primary);
+$switch-size: 16px;
+$switch-base-size: $switch-size + 4;
+$switch-margin: 10px 0;
+
+.switch {
+  position: relative;
+  display: block;
+  margin: 16px 0;
+  font-size: 16px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &_display {
+    &_inline-block {
+      display: inline-block;
+    }
+  }
+
+  &_with {
+    &_margin {
+      margin: $switch-margin;
+    }
+  }
+
+  &__input {
+    position: absolute;
+    overflow: hidden;
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    white-space: nowrap;
+
+    &:focus-visible + .switch__label::before {
+      box-shadow: 0 0 0 2px var(--focus-ring);
+    }
+
+    &:not(:disabled) + .switch__label:hover {
+      color: var(--text-control-hover);
+    }
+
+    &:checked {
+      & + {
+        & .switch__label::before {
+          background: $switch-checked-color;
+        }
+
+        & .switch__label::after {
+          left: ($switch-base-size + math.div($switch-size - $switch-base-size, 2));
+          background: $switch-checked-color;
+        }
+      }
+
+      &:disabled {
+        & + {
+          & .switch__label::before {
+            opacity: .3;
+          }
+        }
+
+        &:checked {
+          & + {
+            & .switch__label {
+              opacity: .4;
+            }
+          }
+        }
+      }
+    }
+
+    &:not(:checked):disabled {
+      & + {
+        & .switch__label {
+          opacity: .6;
+        }
+      }
+    }
+  }
+
+  &__label {
+    position: relative;
+    display: inline-block;
+    vertical-align: bottom;
+    min-height: $switch-base-size;
+    margin-bottom: 0;
+    padding: 0;
+    line-height: $switch-base-size;
+    cursor: pointer;
+
+    &:not(:empty) {
+      padding: 0 ($switch-base-size + (math.div($switch-size, 2) - math.div($switch-base-size, 2)) * 2 + $switch-size * 1.5);
+    }
+
+    &::before, &::after {
+      content: '';
+      position: absolute;
+      border-radius: $switch-size;
+      @include mixins.default-transition;
+    }
+
+    &::after {
+      top: (math.div($switch-base-size - $switch-size, 2));
+      left: (math.div($switch-base-size - $switch-size, 2));
+      width: $switch-size;
+      height: $switch-size;
+      background: #ffffff;
+      @include mixins.default-shadow;
+    }
+
+    &::before {
+      top: 0;
+      left: 0;
+      width: $switch-size + $switch-base-size;
+      height: $switch-base-size;
+      background: $switch-unchecked-color;
+      opacity: .4;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 2d65313685cc0f198d226182172f07aab8314d5c..ba6bb5cab2490ef2d14ad53261d3248bd5f0b4d8 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -89,7 +89,16 @@ function fnv1a64Hex(str) {
+ * @returns A base36 string of the 64-bit hash.
+ */
+ function fnv1a64Base36(str) {
+-	return fnv1a64BigInt(str).toString(36);
++	// Convert the two unsigned lanes without BigInt, preserving the exact base36 key.
++	let { high, low } = fnv1a64(str);
++	let result = "";
++	do {
++		const remainder = (high % 36) * 4294967296 + low;
++		result = (remainder % 36).toString(36) + result;
++		high = Math.floor(high / 36);
++		low = Math.floor(remainder / 36);
++	} while (high || low);
++	return result;
+ }
+ //#endregion
+ export { fnv1a64, fnv1a64Base36, fnv1a64BigInt, fnv1a64Hex };
