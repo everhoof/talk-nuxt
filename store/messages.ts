@@ -305,7 +305,13 @@ export const actions = actionTree(
           }
 
           const filteredMessages = messages.filter((message) => {
-            return [MessageType.GENERAL, MessageType.DONATION, MessageType.POLL].includes(message.type);
+            return [
+              MessageType.GENERAL,
+              MessageType.DONATION,
+              MessageType.POLL,
+              MessageType.DICE,
+              MessageType.HELP,
+            ].includes(message.type);
           });
 
           if (filteredMessages.length > 0 && process.client && document.visibilityState === 'hidden') {

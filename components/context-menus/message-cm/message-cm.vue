@@ -71,15 +71,17 @@ export default class MessageCm extends Vue {
     return this.messageOwnerId === this.$accessor.auth.user?.id;
   }
 
+  get isUserMessage(): boolean {
+    const type = this.message?.type;
+    return type === MessageType.GENERAL || type === MessageType.DICE || type === MessageType.HELP;
+  }
+
   get showProfile(): boolean {
-    return this.message?.type === MessageType.GENERAL;
+    return this.isUserMessage;
   }
 
   get showMention(): boolean {
-    const loggedIn: boolean = this.$accessor.auth.loggedIn;
-    const isGeneral = this.message?.type === MessageType.GENERAL;
-
-    return loggedIn && isGeneral;
+    return this.$accessor.auth.loggedIn && this.isUserMessage;
   }
 
   get showUpdate(): boolean {
@@ -99,8 +101,7 @@ export default class MessageCm extends Vue {
   }
 
   get showPunish(): boolean {
-    const isGeneral = this.message?.type === MessageType.GENERAL;
-    return (this.canBan || this.canMute) && !this.myMessage && isGeneral;
+    return (this.canBan || this.canMute) && !this.myMessage && this.isUserMessage;
   }
 
   openProfile(): void {

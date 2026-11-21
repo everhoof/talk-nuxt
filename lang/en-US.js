@@ -1,4 +1,21 @@
 export default {
+  chat_commands: {
+    dice: 'Dice roll',
+    help: 'Command help',
+    private_help_title: 'Command help · Only you can see this',
+    close_private_help: 'Close command help',
+    private_help_list: '**Choose a topic**\n`/help roll` — rolling dice\n`/help help` — private help',
+    private_help_staff_list:
+      '**Choose a topic**\n`/help roll` — rolling dice\n`/help help` — private help\n`/help showhelp` — sharing help',
+    private_help_roll:
+      '`/roll [dS | NdS]`\n\nThe default is `1d20`. Omit the count to roll **one die**. `/dice` is an alias.\n\n**Examples**\n`/roll d8` — one eight-sided die\n`/roll 2d6` — two six-sided dice',
+    private_help_help:
+      '`/help [command]`\n\nShows instructions **only to you**. Use `/help` to list the available commands.\n\n**Example**\n`/help roll`',
+    private_help_showhelp:
+      '`/showhelp <command>`\n\nPosts instructions **for everyone in chat**. Available to moderators, administrators, and broadcasters.\n\n**Example**\n`/showhelp roll`',
+    private_help_unknown: '**Unknown command.** Type `/help` to see the available commands.',
+    send_error: 'Could not send the message.',
+  },
   poll: {
     pinned: 'Active poll',
     previous: 'Previous poll',

@@ -86,6 +86,25 @@ import BRichInput from '~/components/rich-input/rich-input.vue';
 import type { MentionEvent } from '~/store/messages';
 import BEditedMessagePreview from '~/components/edited-message-preview/edited-message-preview.vue';
 
+const chatCommandNames = ['roll', 'help', 'showhelp'] as const;
+
+function findChatCommand(name: string) {
+  const normalized = name.toLowerCase();
+  const canonical = normalized === 'dice' ? 'roll' : normalized;
+  return chatCommandNames.find((command) => command === canonical);
+}
+
+function parseChatCommand(html: string) {
+  const match = html.match(/^<p>\s*\/([a-z]+)(?:[ \t]+([^<>\r\n]*))?\s*<\/p>$/i);
+  if (!match) return null;
+
+  const [, command, argument = ''] = match;
+  const name = findChatCommand(command);
+  if (!name) return null;
+
+  return { name, argument: argument.trim() };
+}
+
 @Component({
   name: 'b-footer',
   components: {
@@ -116,6 +135,10 @@ export default class Footer extends Vue {
 
   get canCreatePoll(): boolean {
     return this.loggedIn && this.$accessor.auth.can.createOwn('poll').granted;
+  }
+
+  get canShowHelp(): boolean {
+    return this.loggedIn && this.$accessor.auth.can.createOwn('command-help').granted;
   }
 
   get emojisPanelActive(): boolean {
@@ -302,29 +325,58 @@ export default class Footer extends Vue {
 
       this.$accessor.messages.stopMessageEdit();
     } else {
+      const pictures = this.attachIds;
+      const command = pictures.length === 0 ? parseChatCommand(html) : null;
+      if (command?.name === 'help') {
+        this.showPrivateHelp(command.argument);
+        return;
+      }
+
       const message = Message.create(html, this.$accessor.auth.user);
-
-      this.$accessor.messages.ADD_RAW_MESSAGE_TO_START(message);
+      if (!command) this.$accessor.messages.ADD_RAW_MESSAGE_TO_START(message);
       this.richInput.setContent('');
+      this.attachIds = [];
 
-      const createdMessage = await this.$apollo.mutate<CreateMessageMutation, CreateMessageMutationVariables>(
-        {
+      try {
+        const createdMessage = await this.$apollo.mutate<
+          CreateMessageMutation,
+          CreateMessageMutationVariables
+        >({
           mutation: CreateMessage,
           variables: {
             content: message.content,
             randomId: message.randomId,
-            pictures: this.attachIds,
+            pictures,
           },
-        },
-      );
-
-      if (createdMessage.errors) {
-        if (!message.randomId) return;
-        this.$accessor.messages.DELETE_MESSAGE_BY_RANDOM_ID(message.randomId);
+        });
+        if (createdMessage.errors?.length) {
+          this.restoreFailedMessage(message, !!command);
+        } else {
+          this.$nuxt.$emit('force-scroll');
+        }
+      } catch {
+        this.restoreFailedMessage(message, !!command);
+        this.$snotify.error(String(this.$t('chat_commands.send_error')));
       }
+    }
+  }
 
-      this.attachIds = [];
-      this.$nuxt.$emit('force-scroll');
+  showPrivateHelp(argument: string): void {
+    const target = argument.replace(/^\//, '');
+    const commandList = this.canShowHelp ? 'staff_list' : 'list';
+    const topic = target ? findChatCommand(target) : commandList;
+    const helpText = this.$t(`chat_commands.private_help_${topic ?? 'unknown'}`);
+
+    if (topic) this.richInput.setContent('');
+    this.$nuxt.$emit('private-chat-help', String(helpText));
+  }
+
+  restoreFailedMessage(message: Message, isCommand: boolean): void {
+    if (message.randomId && !isCommand) {
+      this.$accessor.messages.DELETE_MESSAGE_BY_RANDOM_ID(message.randomId);
+    }
+    if (isCommand && !this.$accessor.messages.editableMessage && !this.richInput.getText().trim()) {
+      this.richInput.setContent(message.content);
     }
   }
 }

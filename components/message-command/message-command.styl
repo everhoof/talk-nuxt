@@ -1,0 +1,81 @@
+.message-command
+	box-sizing border-box
+	width -moz-fit-content
+	width -webkit-fit-content
+	width fit-content
+	max-width 100%
+	margin 3px 0 5px
+	padding 6px 12px
+	color var(--text-primary)
+	line-height 1.5
+	background var(--background-secondary)
+	border 1px solid var(--border-input)
+	border-left 3px solid var(--text-secondary)
+	border-radius 5px
+
+	&_type_dice
+		border-left-color var(--primary)
+
+	&__header
+		display flex
+		align-items flex-start
+		justify-content space-between
+
+	&__title
+		display flex
+		align-items baseline
+		min-width 0
+		font-weight 600
+
+	&__symbol
+		flex 0 0 1.25em
+		margin-right 6px
+		text-align center
+
+	&__close
+		display flex
+		flex-shrink 0
+		align-items center
+		justify-content center
+		width 24px
+		height 1.5em
+		margin-left 8px
+		padding 0
+		color var(--text-secondary)
+		cursor pointer
+		background transparent
+		border none
+		border-radius 4px
+
+		&:hover,
+		&:focus
+			color var(--text-primary)
+			background var(--background-active)
+
+		& .icon
+			width 16px
+			height 16px
+			fill currentColor
+
+	&__body
+		white-space pre-wrap
+		overflow-wrap break-word
+
+	&__help
+		max-width 62ch
+		margin-top 5px
+
+		& code
+			padding 0 4px
+			color var(--text-accent)
+			font-family ui-monospace, Consolas, monospace
+			font-size .92em
+			vertical-align baseline
+			background var(--background-primary)
+			border-radius 3px
+
+			.page_theme_light &
+				color var(--primary-dark)
+
+		& strong
+			font-weight 600

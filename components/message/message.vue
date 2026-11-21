@@ -40,6 +40,7 @@
         </time>
       </span>
       <b-message-poll v-if="message.type === 6" :message="message" />
+      <b-message-command v-else-if="command" :kind="command" :content="commandText" />
       <template v-else-if="system">
         <span class="message__text">
           <template v-if="message.type === 3">
@@ -91,11 +92,12 @@ import BContextMenu from '~/components/context-menu/context-menu.vue';
 import BMessageImg from '~/components/message-img/message-img.vue';
 import { Message, MessageState, MessageType } from '~/types/message';
 import BMessagePoll from '~/components/message-poll/message-poll.vue';
+import BMessageCommand from '~/components/message-command/message-command.vue';
 import BUserAvatar from '~/components/user-avatar/user-avatar.vue';
 
 @Component({
   name: 'b-message',
-  components: { BMessageImg, BMessagePoll, BUserAvatar },
+  components: { BMessageCommand, BMessageImg, BMessagePoll, BUserAvatar },
 })
 export default class BMessage extends Vue {
   @InjectReactive('message-context-menu')
@@ -163,10 +165,22 @@ export default class BMessage extends Vue {
   }
 
   get system() {
-    return ![MessageType.GENERAL, MessageType.POLL].includes(this.message.type);
+    return !this.command && ![MessageType.GENERAL, MessageType.POLL].includes(this.message.type);
+  }
+
+  get command(): 'dice' | 'help' | null {
+    if (this.message.type === MessageType.DICE) return 'dice';
+    if (this.message.type === MessageType.HELP) return 'help';
+    return null;
+  }
+
+  get commandText(): string {
+    const { content } = this.message;
+    return this.command === 'dice' ? content.replace(/^(\d+d\d+) → /, '$1: ') : content;
   }
 
   get mentioning(): boolean {
+    if (this.command) return false;
     const regexp = new RegExp(`<mention(.+?)data-id="${this.$accessor.auth.user?.id}"`);
 
     return regexp.test(this.text);

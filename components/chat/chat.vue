@@ -36,6 +36,14 @@
             <img class="icon" src="~/assets/icons/spinner.svg" alt="" />
           </div>
         </template>
+        <div class="chat__private-help" role="status">
+          <b-message-command
+            v-if="privateHelp"
+            kind="private-help"
+            :content="privateHelp"
+            @close="clearPrivateHelp"
+          />
+        </div>
       </div>
     </transition>
     <button v-if="browsingHistory" type="button" class="chat__return" @click="forceScroll">
@@ -51,6 +59,7 @@ import { Component, Ref, Vue, Watch } from 'nuxt-property-decorator';
 import { DateTime } from 'luxon';
 import BUploadFile from '~/components/upload-file/upload-file.vue';
 import BMessage from '~/components/message/message.vue';
+import BMessageCommand from '~/components/message-command/message-command.vue';
 import BMessagesSeparator from '~/components/messages-separator/messages-separator.vue';
 import BMessageDonation from '~/components/message-donation/message-donation.vue';
 import { Message } from '~/types/message';
@@ -63,7 +72,7 @@ declare const ResizeObserver: new (callback: () => void) => {
 
 @Component({
   name: 'b-chat',
-  components: { BMessageDonation, BMessagesSeparator, BMessage, BUploadFile },
+  components: { BMessageDonation, BMessagesSeparator, BMessage, BMessageCommand, BUploadFile },
 })
 export default class Chat extends Vue {
   @Ref('scroll') scroll?: HTMLDivElement;
@@ -80,6 +89,12 @@ export default class Chat extends Vue {
   loading = true;
   fetchMore: FetchDirection = 'none';
   playTimestamp: number = 0;
+  privateHelp = '';
+
+  @Watch('$accessor.auth.userId')
+  clearPrivateHelp(): void {
+    this.privateHelp = '';
+  }
 
   @Watch('messages')
   async onMessagesChange(): Promise<void> {
@@ -164,6 +179,7 @@ export default class Chat extends Vue {
     }
 
     this.$nuxt.$on('force-scroll', this.forceScroll);
+    this.$nuxt.$on('private-chat-help', this.showPrivateHelp);
     this.$nuxt.$on('show-message', this.showMessage);
     this.$nuxt.$on('start-message-edit', this.onMessagesChange);
   }
@@ -205,8 +221,15 @@ export default class Chat extends Vue {
     if (this.pollSyncFrame !== null) window.cancelAnimationFrame(this.pollSyncFrame);
     if (this.highlightTimer) clearTimeout(this.highlightTimer);
     this.$nuxt.$off('force-scroll', this.forceScroll);
+    this.$nuxt.$off('private-chat-help', this.showPrivateHelp);
     this.$nuxt.$off('show-message', this.showMessage);
     this.$nuxt.$off('start-message-edit', this.onMessagesChange);
+  }
+
+  async showPrivateHelp(content: string): Promise<void> {
+    this.privateHelp = content;
+    await this.$nextTick();
+    this.scrollDownChat();
   }
 
   async showMessage(message: Message): Promise<void> {
