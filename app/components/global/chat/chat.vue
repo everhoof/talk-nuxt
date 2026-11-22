@@ -1,65 +1,72 @@
 <template>
   <div class="chat__container">
-    <div ref="scroll" class="chat scrollbar" :aria-label="t('chat.messages')">
-      <div ref="messageList" class="chat__messages" :style="{ height: `${virtualizer.getTotalSize()}px` }">
-        <div
-          v-for="{ item, row } in virtualRows"
-          :key="row.key"
-          :ref="measureElement"
-          :class="messageClassNames({ highlighted: row.message.id === highlightedMessageId })"
-          :data-index="item.index"
-          :data-message-id="row.message.id"
-          :style="{ transform: `translateY(${item.start}px)` }"
-        >
-          <template v-if="row.separator">
-            <b-messages-separator :message="row.message" />
-          </template>
-          <template v-if="row.message.type === 5">
-            <b-message-donation :message="row.message" />
-          </template>
-          <template v-else>
-            <b-message :message="row.message" />
-          </template>
+    <div class="chat__viewport">
+      <div ref="scroll" class="chat scrollbar" :aria-label="t('chat.messages')">
+        <div ref="messageList" class="chat__messages" :style="{ height: `${virtualizer.getTotalSize()}px` }">
+          <div
+            v-for="{ item, row } in virtualRows"
+            :key="row.key"
+            :ref="measureElement"
+            :class="messageClassNames({ highlighted: row.message.id === highlightedMessageId })"
+            :data-index="item.index"
+            :data-message-id="row.message.id"
+            :style="{ transform: `translateY(${item.start}px)` }"
+          >
+            <template v-if="row.separator">
+              <b-messages-separator :message="row.message" />
+            </template>
+            <template v-if="row.message.type === 5">
+              <b-message-donation :message="row.message" />
+            </template>
+            <template v-else>
+              <b-message :message="row.message" />
+            </template>
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      v-for="direction in directions"
-      v-show="history.loading[direction] || history.errors[direction]"
-      :key="direction"
-      :class="statusClassNames({ direction })"
-      role="status"
-    >
-      <template v-if="history.errors[direction]">
-        {{ t('chat.load_error') }}
-        <button type="button" @click="history.load(direction)">{{ t('chat.retry') }}</button>
-      </template>
-      <template v-else>
-        {{ t('chat.loading') }}
-      </template>
-    </div>
-    <template v-if="showJumpToLatest">
-      <button
-        type="button"
-        class="chat__jump"
-        :disabled="history.loadingLatest.value"
-        @click="forceScroll"
+      <div
+        v-for="direction in directions"
+        v-show="history.loading[direction] || history.errors[direction]"
+        :key="direction"
+        :class="statusClassNames({ direction })"
+        role="status"
       >
-        {{ t(history.loadingLatest.value ? 'chat.loading' : 'chat.jump_to_latest') }}
-        <template v-if="messagesStore.unreadCount">
-          <span>
-            · {{ t('chat.new_messages', { count: messagesStore.unreadCount }) }}
-          </span>
+        <template v-if="history.errors[direction]">
+          {{ t('chat.load_error') }}
+          <button type="button" @click="history.load(direction)">{{ t('chat.retry') }}</button>
         </template>
-        <svg-icon name="chevron_down" class="chat__jump-icon" aria-hidden="true" />
-      </button>
-    </template>
-    <template v-if="history.errors.latest">
-      <div class="chat__status chat__status_direction_newer" role="alert">
-        {{ t('chat.load_error') }}
-        <button type="button" @click="forceScroll">{{ t('chat.retry') }}</button>
+        <template v-else>
+          {{ t('chat.loading') }}
+        </template>
       </div>
-    </template>
+      <template v-if="showJumpToLatest">
+        <button
+          type="button"
+          class="chat__jump"
+          :disabled="history.loadingLatest.value"
+          @click="forceScroll"
+        >
+          {{ t(history.loadingLatest.value ? 'chat.loading' : 'chat.jump_to_latest') }}
+          <template v-if="messagesStore.unreadCount">
+            <span>
+              · {{ t('chat.new_messages', { count: messagesStore.unreadCount }) }}
+            </span>
+          </template>
+          <svg-icon name="chevron_down" class="chat__jump-icon" aria-hidden="true" />
+        </button>
+      </template>
+      <template v-if="history.errors.latest">
+        <div class="chat__status chat__status_direction_newer" role="alert">
+          {{ t('chat.load_error') }}
+          <button type="button" @click="forceScroll">{{ t('chat.retry') }}</button>
+        </div>
+      </template>
+    </div>
+    <div class="chat__private-help" role="status">
+      <template v-if="privateHelp && !settingsStore.isOBS && !settingsStore.isPlay">
+        <b-message-command kind="private-help" :content="privateHelp" @close="clearPrivateHelp" />
+      </template>
+    </div>
   </div>
 </template>
 
@@ -105,6 +112,7 @@ const messageList = useTemplateRef<HTMLDivElement>('messageList');
 const history = useChatHistory();
 const directions: FetchDirection[] = ['older', 'newer'];
 const mounted = ref(false);
+const privateHelp = ref('');
 const atEnd = ref(true);
 const navigating = ref(false);
 const highlightedMessageId = ref<number | null>(null);
@@ -259,6 +267,18 @@ watch(
   { immediate: true },
 );
 
+function clearPrivateHelp() {
+  privateHelp.value = '';
+}
+
+async function showPrivateHelp(content: string) {
+  privateHelp.value = content;
+  await nextTick();
+  virtualizer.value.scrollToEnd();
+}
+
+watch(() => authStore.sessionVersion, clearPrivateHelp);
+
 onMounted(async () => {
   mounted.value = true;
   await nextTick();
@@ -267,6 +287,7 @@ onMounted(async () => {
   schedulePrefetch();
   scheduleVisiblePollSync();
   events.on('force-scroll', forceScroll);
+  events.on('private-chat-help', showPrivateHelp);
   events.on('show-message', showMessage);
   events.on('start-message-edit', onStartMessageEdit);
   if (settingsStore.isPlay) {
@@ -287,6 +308,7 @@ onBeforeUnmount(() => {
   clearInterval(replayTimer);
   clearTimeout(highlightTimer);
   events.off('force-scroll', forceScroll);
+  events.off('private-chat-help', showPrivateHelp);
   events.off('show-message', showMessage);
   events.off('start-message-edit', onStartMessageEdit);
 });

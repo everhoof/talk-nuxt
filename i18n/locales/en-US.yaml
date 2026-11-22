@@ -123,3 +123,41 @@ reminders:
     message: Confirm your email address to use the chat.
     action: Confirm
 warning: We ask you to respect the presenters and other listeners, and not to raise the topic of politics.
+
+chat_commands:
+  dice: "Dice roll"
+  help: "Command help"
+  private_help_title: "Command help · Only you can see this"
+  close_private_help: "Close command help"
+  private_help_list: |-
+    **Choose a topic**
+    `/help roll` — rolling dice
+    `/help help` — private help
+  private_help_staff_list: |-
+    **Choose a topic**
+    `/help roll` — rolling dice
+    `/help help` — private help
+    `/help showhelp` — sharing help
+  private_help_roll: |-
+    `/roll [dS {'|'} NdS]`
+
+    The default is `1d20`. Omit the count to roll **one die**. `/dice` is an alias.
+
+    **Examples**
+    `/roll d8` — one eight-sided die
+    `/roll 2d6` — two six-sided dice
+  private_help_help: |-
+    `/help [command]`
+
+    Shows instructions **only to you**. Use `/help` to list the available commands.
+
+    **Example**
+    `/help roll`
+  private_help_showhelp: |-
+    `/showhelp <command>`
+
+    Posts instructions **for everyone in chat**. Available to moderators, administrators, and broadcasters.
+
+    **Example**
+    `/showhelp roll`
+  private_help_unknown: "**Unknown command.** Type `/help` to see the available commands."

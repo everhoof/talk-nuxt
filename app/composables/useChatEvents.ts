@@ -10,6 +10,7 @@ type ChatEvents = {
   'file-drag': DragEvent;
   'force-scroll': void;
   mention: MentionEvent;
+  'private-chat-help': string;
   'show-message': Message;
   'start-message-edit': Message;
   'visible-polls-changed': number[];

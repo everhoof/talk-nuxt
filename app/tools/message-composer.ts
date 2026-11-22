@@ -22,7 +22,7 @@ export interface ComposerSubmission extends ComposerDraft {
 }
 
 export interface ComposerTransport {
-  submit: (submission: ComposerSubmission) => Promise<void>;
+  submit: (submission: ComposerSubmission) => Promise<void | 'keep-draft'>;
   newId: () => string;
   errorMessage: (error: unknown) => string;
 }
@@ -67,10 +67,11 @@ export function createMessageComposer(transport: ComposerTransport) {
     status.value = 'sending';
     error.value = '';
     try {
-      await transport.submit(submission);
+      const result = await transport.submit(submission);
       if (attempt !== generation) return false;
       // Leave any newer draft or a cancelled edit alone when the response arrives.
-      if (revision === submission.revision && editing.value?.id === submission.messageId) {
+      if (result !== 'keep-draft' && revision === submission.revision
+        && editing.value?.id === submission.messageId) {
         if (submission.messageId === undefined) {
           updateDraft({ html: '', text: '' });
         } else {

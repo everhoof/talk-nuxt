@@ -52,6 +52,9 @@
         <template v-if="message.type === 6">
           <b-message-poll :message="message" />
         </template>
+        <template v-else-if="command">
+          <b-message-command :kind="command" :content="commandText" />
+        </template>
         <template v-else-if="system">
           <span class="message__text">
             <template v-if="message.type === 3">
@@ -173,6 +176,7 @@ const text = computed(() => {
 });
 
 const youtubeId = computed((): string | null => {
+  if (command.value) return null;
   const regex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
   const matches = regex.exec(props.message.content);
   return matches?.[1] ?? null;
@@ -198,11 +202,18 @@ const compact = computed(() => {
   return settingsStore.compact;
 });
 
-const system = computed(() => {
-  return ![MessageType.GENERAL, MessageType.POLL].includes(props.message.type);
+const command = computed(() => {
+  if (props.message.type === MessageType.DICE) return 'dice';
+  if (props.message.type === MessageType.HELP) return 'help';
+  return null;
 });
+const commandText = computed(() => (command.value === 'dice'
+  ? props.message.content.replace(/^(\d+d\d+) → /, '$1: ')
+  : props.message.content));
+const system = computed(() => !command.value && ![MessageType.GENERAL, MessageType.POLL].includes(props.message.type));
 
 const mentioning = computed((): boolean => {
+  if (command.value) return false;
   const regexp = new RegExp(`<mention(.+?)data-id="${authStore.user?.id}"`);
   return regexp.test(text.value);
 });

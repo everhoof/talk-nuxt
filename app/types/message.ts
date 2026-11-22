@@ -20,6 +20,8 @@ export enum MessageType {
   LOGOUT = 4,
   DONATION = 5,
   POLL = 6,
+  DICE = 7,
+  HELP = 8,
 }
 
 export interface DonationJson {

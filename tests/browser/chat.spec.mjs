@@ -251,6 +251,13 @@ test.beforeAll(async () => {
           extensions: { exception: { response: { statusCode: 400, message: ['Message rejected'] } } },
         }];
       } else {
+        if (variables.content === '<p>/dice d6</p>') {
+          message.type = 7;
+          message.content = '1d6 → 4';
+        } else if (variables.content === '<p>/showhelp roll</p>') {
+          message.type = 8;
+          message.content = '**Examples**\n`/roll d6` — roll a die';
+        }
         messages.push(message);
         data = { createMessage: { id: message.id } };
       }
@@ -1082,7 +1089,9 @@ test('only an empty focused composer handles the edit shortcut', async ({ page }
   await editor.press('ArrowUp');
   await expect(page.locator('.edited-message-preview')).toHaveCount(0);
   await editor.press('Escape');
-  await editor.fill('');
+  await editor.press('ControlOrMeta+a');
+  await editor.press('Backspace');
+  await expect(editor).toHaveText('');
   await editor.press('ArrowUp');
   await expect(page.locator('.edited-message-preview')).toBeVisible();
   await editor.press('Escape');
@@ -1259,4 +1268,49 @@ test('a session refresh cannot reuse or apply an earlier active-poll response', 
   });
   const polls = await page.evaluate(() => document.querySelector('#__nuxt').__vue_app__.config.globalProperties.$pinia._s.get('messages').activePolls.map(({ id }) => id));
   expect(polls).not.toContain(999);
+});
+
+test('shows private command help locally and keeps an unknown topic in the composer', async ({ page }) => {
+  let sends = 0;
+  await page.route('**/graphql*', async (route) => {
+    if (route.request().postDataJSON()?.operationName === 'CreateMessage') sends++;
+    await route.continue();
+  });
+  await openChat(page);
+  const editor = page.locator('.footer [contenteditable=true]');
+  const help = page.locator('.chat__private-help .message-command');
+  await editor.fill('/help missing');
+  await editor.press('Enter');
+  await expect(help).toContainText('Неизвестная команда');
+  await expect(editor).toHaveText('/help missing');
+
+  await editor.fill('/help /dice');
+  await editor.press('Enter');
+  await expect(help.locator('code').first()).toHaveText('/roll [dS | NdS]');
+  await expect(editor).toHaveText('');
+  expect(sends).toBe(0);
+  await page.getByRole('button', { name: 'Закрыть справку по командам' }).click();
+  await expect(help).toHaveCount(0);
+});
+
+test('shows server dice and public help results as authored messages with unread counts', async ({ page }) => {
+  await openChat(page);
+  await setWindowState(page, false);
+  const editor = page.locator('.footer [contenteditable=true]');
+  await editor.fill('/dice d6');
+  await editor.press('Enter');
+  const dice = page.locator('[data-message-id="651"]');
+  await expect(dice.locator('.message-command_type_dice')).toContainText('1d6: 4');
+  await expect(dice.locator('.message__author-name')).toContainText(owner.username);
+  await expect(page.locator('.chat__message').filter({ hasText: '/dice d6' })).toHaveCount(0);
+
+  await editor.fill('/showhelp roll');
+  await editor.press('Enter');
+  const help = page.locator('[data-message-id="652"] .message-command');
+  await expect(help.locator('strong')).toHaveText('Examples');
+  await expect(help.locator('code')).toHaveText('/roll d6');
+  await expect.poll(async () => (await appState(page)).unread).toBe(2);
+  await dice.locator('.message').click({ button: 'right' });
+  await expect(page.getByRole('menuitem', { name: 'Ответить', exact: true })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Изменить сообщение', exact: true })).toHaveCount(0);
 });

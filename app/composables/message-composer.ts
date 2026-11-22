@@ -25,6 +25,10 @@ import { Message } from '~/types/message';
 import { getRandomString } from '~/tools/util';
 import { pollText } from '~/tools/poll-formatting';
 import { createMessageComposer } from '~/tools/message-composer';
+import {
+  findChatCommand,
+  parseChatCommand,
+} from '~/tools/chat-commands';
 
 export function useMessageComposer(editor: Readonly<ShallowRef<RichInputHandle | null>>) {
   const auth = useAuthStore();
@@ -46,9 +50,19 @@ export function useMessageComposer(editor: Readonly<ShallowRef<RichInputHandle |
       if (!auth.loggedIn) throw new Error(t('chat.send_error'));
       const session = identity();
       if (submission.messageId === undefined) {
-        const pending = Message.create(submission.html, auth.user);
-        pending.randomId = submission.randomId;
-        messages.prependMessage(pending);
+        const command = submission.pictures.length === 0 ? parseChatCommand(submission.html) : null;
+        if (command?.name === 'help') {
+          const target = command.argument.replace(/^\//, '');
+          const list = auth.can.createOwn('command-help').granted ? 'staff_list' : 'list';
+          const topic = target ? findChatCommand(target) : list;
+          events.emit('private-chat-help', t(`chat_commands.private_help_${topic ?? 'unknown'}`));
+          return topic ? undefined : 'keep-draft';
+        }
+        if (!command) {
+          const pending = Message.create(submission.html, auth.user);
+          pending.randomId = submission.randomId;
+          messages.prependMessage(pending);
+        }
         try {
           const { data, errors } = await client.mutate<CreateMessageMutation, CreateMessageMutationVariables>({
             mutation: CreateMessage,
@@ -57,7 +71,7 @@ export function useMessageComposer(editor: Readonly<ShallowRef<RichInputHandle |
           if (errors?.length) throw new Error(errors[0].message);
           if (!data?.createMessage) throw new Error(t('chat.send_error'));
         } catch (error) {
-          messages.removePendingMessage(submission.randomId);
+          if (!command) messages.removePendingMessage(submission.randomId);
           throw error;
         }
       } else {

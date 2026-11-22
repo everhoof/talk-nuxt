@@ -174,7 +174,9 @@ export const useMessagesStore = defineStore('messages', () => {
       const last = messages[0];
       if (last) storeState.lastDeliveredId = Math.max(storeState.lastDeliveredId ?? 0, last.id);
       const unread = messages.filter(({ type }) =>
-        [MessageType.GENERAL, MessageType.DONATION, MessageType.POLL].includes(type));
+        [
+          MessageType.GENERAL, MessageType.DONATION, MessageType.POLL, MessageType.DICE, MessageType.HELP,
+        ].includes(type));
       if (unread.length && !isReadingLatest()) incrementUnread(unread.length);
     },
     refresh: fetchActivePolls,
