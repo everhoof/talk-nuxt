@@ -744,15 +744,48 @@ test('jumping from dated history includes the latest message and discards an in-
 }) => {
   historyDelay = 600;
   await openChat(page, `/?from=${encodeURIComponent(makeMessage(350).createdAt)}`);
-  await expect(page.locator('.chat__jump')).toBeVisible();
+  const jump = page.locator('.chat__jump');
+  await expect(jump).toBeVisible();
+  const chevron = jump.locator('.chat__jump-icon path');
+  await expect(chevron).toBeVisible();
+  await expect(chevron).toHaveCSS('stroke-width', '2px');
+  await expect(chevron).toHaveCSS('stroke', await jump.evaluate((button) => getComputedStyle(button).color));
   await expect.poll(() => requests.some((r) => !r.poll && r.lastId === 350 && !r.reverse)).toBe(true);
-  await page.locator('.chat__jump').click();
+  await jump.click();
   await expect.poll(async () => (await appState(page)).latest).toBe(650);
   await expect.poll(async () => (await appState(page)).bottom).toBeLessThan(2);
   await page.waitForTimeout(700);
   expect((await appState(page)).count).toBe(100);
   expect((await appState(page)).newer).toBe(false);
 });
+
+for (const reducedMotion of ['no-preference', 'reduce']) {
+  test(`returns to the latest messages with reduced motion set to ${reducedMotion}`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    await openChat(page);
+    const chat = page.locator('.chat');
+    await chat.evaluate((viewport) => {
+      viewport.scrollTop = viewport.scrollHeight - viewport.clientHeight - 700;
+    });
+    const jump = page.locator('.chat__jump');
+    await expect(jump).toBeVisible();
+    await chat.evaluate((viewport) => {
+      const start = viewport.scrollTop;
+      const end = viewport.scrollHeight - viewport.clientHeight;
+      viewport.addEventListener('scroll', () => {
+        if (viewport.scrollTop > start + 80 && viewport.scrollTop < end - 80) {
+          viewport.dataset.scrolledThroughHistory = 'true';
+        }
+      });
+    });
+
+    await jump.click();
+
+    await expect.poll(async () => (await appState(page)).bottom).toBeLessThan(2);
+    await expect(jump).toHaveCount(0);
+    expect(await chat.getAttribute('data-scrolled-through-history')).toBe(reducedMotion === 'reduce' ? null : 'true');
+  });
+}
 
 test('keeps the latest messages visible on a mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });

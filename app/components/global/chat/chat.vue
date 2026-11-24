@@ -44,7 +44,7 @@
           type="button"
           class="chat__jump"
           :disabled="history.loadingLatest.value"
-          @click="forceScroll"
+          @click="jumpToLatest"
         >
           {{ t(history.loadingLatest.value ? 'chat.loading' : 'chat.jump_to_latest') }}
           <template v-if="messagesStore.unreadCount">
@@ -58,7 +58,7 @@
       <template v-if="history.errors.latest">
         <div class="chat__status chat__status_direction_newer" role="alert">
           {{ t('chat.load_error') }}
-          <button type="button" @click="forceScroll">{{ t('chat.retry') }}</button>
+          <button type="button" @click="jumpToLatest">{{ t('chat.retry') }}</button>
         </div>
       </template>
     </div>
@@ -212,12 +212,21 @@ function schedulePrefetch() {
   });
 }
 
-async function forceScroll() {
+async function scrollToLatest(behavior: 'auto' | 'smooth') {
   if (navigating.value) return;
   highlightedMessageId.value = null;
   if (messagesStore.hasNewerMessages && !(await history.loadLatest())) return;
   await nextTick();
-  virtualizer.value.scrollToEnd();
+  virtualizer.value.scrollToEnd({ behavior });
+}
+
+function forceScroll() {
+  return scrollToLatest('auto');
+}
+
+function jumpToLatest() {
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return scrollToLatest(reducedMotion ? 'auto' : 'smooth');
 }
 
 async function showMessage(message: Message) {
