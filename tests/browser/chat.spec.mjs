@@ -1072,7 +1072,7 @@ test('retains a failed send and retries with the same client identity', async ({
   expect(sent[0].randomId).toBe(sent[1].randomId);
 });
 
-test('a successful send leaves a newer draft intact', async ({ page }) => {
+test('a pending send stays at the bottom with a slow client clock and preserves a newer draft', async ({ page }) => {
   const { promise: arrived, resolve: intercepted } = Promise.withResolvers();
   const { promise: response, resolve: release } = Promise.withResolvers();
   await page.route('**/graphql*', async (route) => {
@@ -1081,15 +1081,25 @@ test('a successful send leaves a newer draft intact', async ({ page }) => {
     await response;
     return route.continue();
   });
+  await page.clock.setFixedTime(new Date(makeMessage(1).createdAt));
   await openChat(page);
+  await expect.poll(async () => (await appState(page)).bottom).toBeLessThan(2);
   const editor = page.locator('.footer [contenteditable=true]');
   await editor.fill('First draft');
   await editor.press('Enter');
   await arrived;
-  await editor.fill('New draft while sending');
-  release();
+  try {
+    const lastRow = page.locator('.chat__message').last();
+    await expect(lastRow.locator('.message_state_not-delivered')).toContainText('First draft');
+    await expect.poll(async () => (await appState(page)).bottom).toBeLessThan(2);
+    await editor.fill('New draft while sending');
+  } finally {
+    release();
+  }
   await expect(page.locator('.footer__send-button')).toBeEnabled();
   await expect(editor).toHaveText('New draft while sending');
+  await expect(page.locator('.chat__message').last()).toHaveAttribute('data-message-id', '651');
+  await expect(page.locator('.chat__message').filter({ hasText: 'First draft' })).toHaveCount(1);
 });
 
 test('a rejected edit can be retried without losing its text or the saved draft', async ({ page }) => {

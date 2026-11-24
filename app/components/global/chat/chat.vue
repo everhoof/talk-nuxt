@@ -93,7 +93,10 @@ import {
 import type { VirtualizerOptions } from '@tanstack/vue-virtual';
 import { DateTime } from 'luxon';
 import type { FetchDirection } from '~/stores/messages';
-import type { Message } from '~/types/message';
+import {
+  type Message,
+  MessageState,
+} from '~/types/message';
 
 const messageClassNames = bmc('chat__message', { highlighted: flag('state', 'highlighted') });
 const statusClassNames = bmc('chat__status', { direction: true });
@@ -135,8 +138,10 @@ const messages = computed(() => {
 const rows = computed(() => {
   let previousDate: string | null = null;
   return messages.value.map((message, index) => {
-    const date = DateTime.fromISO(message.createdAt).setZone(settingsStore.timeZone)
-      .toISODate();
+    const date = message.state === MessageState.SENT
+      ? previousDate
+      : DateTime.fromISO(message.createdAt).setZone(settingsStore.timeZone)
+          .toISODate();
     const isSeparator = index > 0 && date !== previousDate;
     previousDate = date;
     return { message, separator: isSeparator, key: message.randomId || message.id };
@@ -303,7 +308,7 @@ onMounted(async () => {
     const offset = Date.now() - playTimestamp.value;
     replayTimer = setInterval(() => {
       playTimestamp.value = Date.now() - offset;
-      const lastLoaded = messagesStore.messages[0];
+      const lastLoaded = messagesStore.messages.find(({ state }) => state === MessageState.DELIVERED);
       if (!lastLoaded || lastLoaded.createdAtMillis <= playTimestamp.value) void history.load('newer');
     }, 500);
   }

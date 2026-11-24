@@ -52,13 +52,18 @@ export const useMessagesStore = defineStore('messages', () => {
   const knownPolls = new Map<number, Message>();
   let tabActivity: ReturnType<typeof trackTabActivity> | undefined;
   const messages = computed(() =>
-    [...storeState.rawMessages].toSorted((a, b) => b.createdAtMillis - a.createdAtMillis));
+    storeState.rawMessages.toSorted((a, b) => {
+      if (a.state !== b.state) return a.state === MessageState.SENT ? -1 : 1;
+      // Pending messages are prepended in send order, regardless of the client clock.
+      return a.state === MessageState.SENT ? 0 : b.createdAtMillis - a.createdAtMillis;
+    }));
 
   function replaceMessages(payload: Message[]) {
     const ids = new Set(payload.map(({ id }) => id));
     const randomIds = new Set(payload.map(({ randomId }) => randomId).filter(Boolean));
     storeState.rawMessages = mergeMessages(storeState.rawMessages, payload)
-      .filter((message) => ids.has(message.id) || !!(message.randomId && randomIds.has(message.randomId)));
+      .filter((message) => message.state === MessageState.SENT
+        || ids.has(message.id) || !!(message.randomId && randomIds.has(message.randomId)));
     reconcilePolls(payload);
   }
 
